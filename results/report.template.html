@@ -1,4 +1,4 @@
-<title>The 99% That Wasn't</title>
+<title>Onih 99 posto koji to nisu bili</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -360,147 +360,199 @@
 <div class="wrap">
 
   <header class="masthead">
-    <p class="eyebrow">Cross-dataset evaluation · PlantVillage → PlantDoc</p>
-    <h1>The 99% that wasn't</h1>
+    <p class="eyebrow">Unakrsna evaluacija · PlantVillage → PlantDoc</p>
+    <h1>Onih 99 % koji to nisu bili</h1>
     <p class="standfirst">
-      A leaf-disease classifier scores {{VAL:test.accuracy:pct}} on the
-      benchmark everyone uses. Photograph an actual diseased plant in an actual
-      field and it is right one time in seven.
+      Model za prepoznavanje bolesti biljaka postiže {{VAL:test.accuracy:pct}}
+      na skupu koji svi koriste. Fotografišite stvarnu bolesnu biljku u
+      stvarnom polju i tačan je jednom u sedam pokušaja.
     </p>
   </header>
 
   <div class="verdict">
     <div class="verdict-half lab">
-      <p class="verdict-label">Lab photographs</p>
+      <p class="verdict-label">Laboratorijski snimci</p>
       <p class="verdict-number">{{VAL:test.accuracy:pct}}</p>
       <p class="verdict-note">
-        PlantVillage held-out test set — {{VAL:test.n_samples:int}} images the
-        model never saw during training, drawn from the same studio conditions
-        it was trained on.
+        Izdvojeni test skup PlantVillage — {{VAL:test.n_samples:int}} slika koje
+        model nije video tokom obuke, ali iz istih studijskih uslova u kojima je
+        obučavan.
       </p>
     </div>
-    <div class="verdict-arrow">same model<br>same code<br>same 28 classes</div>
+    <div class="verdict-arrow">isti model<br>isti kod<br>istih 28 klasa</div>
     <div class="verdict-half field">
-      <p class="verdict-label">Field photographs</p>
+      <p class="verdict-label">Terenski snimci</p>
       <p class="verdict-number">{{VAL:field.accuracy:pct}}</p>
       <p class="verdict-note">
-        PlantDoc — {{VAL:field.n_samples:int}} photographs of the same diseases
-        taken in real fields. Chance on 28 classes is 3.6%.
+        PlantDoc — {{VAL:field.n_samples:int}} fotografija istih bolesti
+        snimljenih u stvarnom polju. Nasumično pogađanje na 28 klasa daje 3,6 %.
       </p>
     </div>
   </div>
 
   <section>
-    <h2><span class="num">01</span><span>The question this asks</span></h2>
+    <h2><span class="num">01</span><span>Pitanje koje ovaj rad postavlja</span></h2>
     <div class="measure">
       <p class="lede">
-        Almost every plant-disease project trains on PlantVillage, reports an
-        accuracy in the high nineties, and stops there. That number is real. It
-        is also close to meaningless.
+        Gotovo svaki rad o bolestima biljaka obučava model na skupu PlantVillage,
+        prijavljuje tačnost preko 99 % i tu se zaustavlja. Ta brojka je stvarna.
+        Ona je istovremeno gotovo bez značenja.
       </p>
       <p>
-        Every PlantVillage image is a studio photograph: one detached leaf,
-        centred in frame, on a uniform grey background, under even lighting.
-        Train and test splits both come from that distribution — so a high test
-        score confirms the model learned <em>that distribution</em>, and says
-        nothing about whether it learned plant pathology.
+        Svaka slika u skupu PlantVillage je studijski snimak: jedan otkinut list,
+        centriran u kadru, na jednoličnoj sivoj pozadini, pri ujednačenom
+        osvetljenju. I skup za obuku i skup za testiranje potiču iz iste
+        raspodele — pa visoka tačnost na testu potvrđuje da je model naučio
+        <em>tu raspodelu</em>, a ne govori ništa o tome da li je naučio
+        patologiju biljaka.
       </p>
       <p>
-        The way to find out is to change the photographs but not the question.
-        This project trains on PlantVillage and then evaluates the same model,
-        with no fine-tuning and no adaptation, on
+        Način da se to proveri jeste promeniti fotografije, a zadržati isto
+        pitanje. Model je ovde obučen na skupu PlantVillage, a zatim testiran —
+        bez dodatne obuke i bez ikakvog prilagođavanja — na skupu
         <a href="https://huggingface.co/datasets/Project-AgML/plant_doc_classification">PlantDoc</a>:
-        the same diseases on the same crops, photographed in real fields with
-        cluttered backgrounds, overlapping leaves, variable light and awkward
-        angles. All 28 PlantDoc classes map onto PlantVillage classes, so the
-        model is being asked exactly the question it was trained to answer.
+        iste bolesti na istim kulturama, ali fotografisane u stvarnom polju, sa
+        složenom pozadinom, preklopljenim listovima, promenljivim osvetljenjem i
+        nezgodnim uglovima. Svih 28 klasa skupa PlantDoc preslikano je na klase
+        skupa PlantVillage, pa se modelu postavlja tačno ono pitanje za koje je
+        obučen.
       </p>
 
       <div class="callout">
-        <p class="callout-title">Controlling the comparison</p>
+        <p class="callout-title">Kontrola poređenja</p>
         <p>
-          PlantDoc covers 28 of the 39 training classes. Comparing 39-class lab
-          accuracy against 28-class field accuracy would confound "harder
-          images" with "different label set", so every lab figure quoted
-          alongside a field figure is <strong>restricted to the same 28
-          classes</strong>. A third evaluation masks the model's output to those
-          28 classes, separating "predicted something that cannot occur here"
-          from "genuinely confused between two plausible diseases".
+          PlantDoc pokriva 28 od 39 klasa na kojima je model obučen. Poređenje
+          tačnosti na 39 klasa sa tačnošću na 28 klasa mešalo bi „teže slike“ sa
+          „drugačijim skupom oznaka“, pa je svaka laboratorijska brojka navedena
+          uz terensku <strong>ograničena na istih 28 klasa</strong>. Treća
+          evaluacija dodatno maskira izlaz modela na tih 28 klasa, čime se
+          razdvaja „predvideo je klasu koja se ovde ne može pojaviti“ od
+          „stvarno je pomešao dve moguće bolesti“.
         </p>
       </div>
 
       <div class="callout">
-        <p class="callout-title">And a control, because the alternative explanation is a bug</p>
+        <p class="callout-title">I kontrolni skup, jer je druga mogućnost — greška u kodu</p>
         <p>
-          "The model does not generalize" and "the label mapping is broken"
-          produce identical numbers, and this project hit exactly that bug once
-          during development. So the same model, through the same evaluation
-          code, was also run against an
-          <strong>independently packaged PlantVillage derivative</strong> —
-          different uploader, different class naming,
-          {{VAL:control.n_samples:int}} images. It scores
-          <span class="tag-lab">{{VAL:control.accuracy:pct}}</span>. The mapping
-          and evaluation code work; what follows is domain shift, not a defect.
+          Tvrdnje „model ne generalizuje“ i „preslikavanje klasa je pogrešno“
+          daju identične brojke, a upravo ta greška se jednom i dogodila tokom
+          izrade ovog rada. Zato je isti model, kroz isti kod za evaluaciju,
+          testiran i na <strong>nezavisno pripremljenoj kopiji skupa
+          PlantVillage</strong> — drugi autor, drugačija imena klasa,
+          {{VAL:control.n_samples:int}} slika. Rezultat je
+          <span class="tag-lab">{{VAL:control.accuracy:pct}}</span>.
+          Preslikavanje i evaluacija rade ispravno; ono što sledi je promena
+          domena, a ne greška.
         </p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2><span class="num">02</span><span>How the model was built</span></h2>
+    <h2><span class="num">02</span><span>Podaci i njihova priprema</span></h2>
     <div class="measure">
       <p>
-        The classifier is an ImageNet-pretrained ResNet18 fine-tuned for 12
-        epochs on 38,812 PlantVillage images, with a stratified 70/15/15
-        train/validation/test split. Training used mixed precision, OneCycle
-        learning-rate scheduling, AdamW, gradient clipping and label smoothing.
-        Augmentation was deliberately aggressive — random resized crops, flips,
-        rotation, colour jitter and random erasing — precisely because the
-        source images are so uniform that a network will otherwise memorise
-        their incidental regularities. The model has
-        {{VAL:meta.parameters:int}} trainable parameters.
+        Sva tri skupa preuzeta su u parquet formatu. To nije slučajan izbor:
+        pojedini skupovi na platformi Hugging Face — uključujući i najpreuzimaniju
+        kopiju skupa PlantVillage — isporučuju <code>.py</code> skriptu za
+        učitavanje koja se izvršava na lokalnoj mašini ako se prosledi
+        <code>trust_remote_code=True</code>. Ovde to nigde nije urađeno; parquet
+        je čist podatak i ne može ništa da izvrši.
+      </p>
+
+      <h3>Zašto se podaci prvo prepisuju na disk</h3>
+      <p>
+        Biblioteka <code>datasets</code> dekodira sliku kroz PIL pri svakom
+        pristupu, što znači da bi obuka direktno iz parquet fajlova plaćala cenu
+        dekodiranja unutar same petlje obuke, u svakoj epohi. Zato se svi skupovi
+        jednom prepisuju u obično stablo direktorijuma, gde ih
+        <code>ImageFolder</code> dekodira u posebnim radnim procesima i time drži
+        grafičku karticu zauzetom umesto da čeka procesor.
+      </p>
+
+      <h3>Podela skupa</h3>
+      <p>
+        PlantVillage je podeljen stratifikovano u odnosu 70/15/15. Stratifikacija
+        je ovde neophodna, a ne kozmetička: najbrojnija klasa ima oko 5.000
+        slika, a najređa svega 150, pa bi nasumična podela ostavila retke klase
+        sa premalo test primera da bi njihova F1 mera uopšte bila stabilna.
+      </p>
+
+      <h3>Preslikavanje klasa</h3>
+      <p>
+        PlantDoc koristi drugačija imena klasa — „Apple Scab Leaf“ umesto
+        „Apple___Apple_scab“ — i golo ime kulture označava zdrav list. Preslikavanje
+        se vrši u trenutku pripreme podataka, tako da se slike zapisuju već pod
+        imenima klasa iz skupa PlantVillage. Posledica je da evaluacija na
+        terenskom skupu koristi potpuno isti kod kao i evaluacija na
+        laboratorijskom, bez ijednog izuzetka u kodu za poređenje.
       </p>
       <p>
-        Checkpoints were selected on validation <strong>macro</strong> F1 rather
-        than accuracy. PlantVillage is heavily imbalanced — about 5,000 images in
-        the largest class against 150 in the smallest — and plain accuracy
-        would keep choosing checkpoints that are strong on common classes and
-        indifferent to rare ones. The reported checkpoint is epoch
-        {{VAL:meta.best_epoch:raw}}. Total training time was
-        {{VAL:meta.train_minutes:f1}} minutes on an RTX 4060.
+        Pošto pogrešno preslikavanje proizvodi rezultat koji izgleda identično
+        kao neuspeh generalizacije, ugrađena je provera koja prekida izvršavanje
+        ako bilo koje ime klase ne postoji u stvarnom rečniku modela.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span><span>Kako je model napravljen</span></h2>
+    <div class="measure">
+      <p>
+        Klasifikator je mreža ResNet18 prethodno obučena na skupu ImageNet i
+        dodatno obučavana 12 epoha na 38.812 slika iz skupa PlantVillage. Model
+        ima {{VAL:meta.parameters:int}} parametara koji se uče.
+      </p>
+
+      <h3>Augmentacija — i zašto je namerno agresivna</h3>
+      <p>
+        Primenjeni su nasumično isecanje i skaliranje, horizontalno i vertikalno
+        preslikavanje, rotacija do 20 stepeni, promena osvetljenosti, kontrasta,
+        zasićenja i nijanse, kao i nasumično brisanje delova slike. Razlog je
+        upravo jednoličnost polaznog skupa: bez toga mreža lako nauči sporedne
+        pravilnosti — nijansu pozadine, položaj lista u kadru — umesto same
+        bolesti. Preslikavanje i rotacija su ovde dozvoljeni jer list nema
+        prirodnu orijentaciju.
+      </p>
+
+      <h3>Izbor modela</h3>
+      <p>
+        Model je biran prema <strong>makro</strong> F1 meri na validacionom
+        skupu, a ne prema tačnosti. Kod ovako neuravnoteženog skupa tačnost bi
+        stalno birala modele koji su dobri na čestim klasama i ravnodušni prema
+        retkim bolestima. Izabrana je epoha {{VAL:meta.best_epoch:raw}}.
       </p>
     </div>
 
     <figure>
-      <img src="{{FIG:training_curves}}" alt="Two line charts. Left: training and validation cross-entropy loss falling across 12 epochs. Right: validation accuracy and macro F1 rising to approximately 0.997 and 0.994.">
+      <img src="{{FIG:training_curves}}" alt="Dva linijska grafika. Levo: gubitak na obuci i validaciji opada kroz 12 epoha. Desno: tačnost i makro F1 na validaciji rastu do približno 0,997 i 0,994.">
       <figcaption>
-        <b>Training converges quickly and cleanly.</b> Validation accuracy passes
-        99% by epoch 7. Nothing in this chart hints at the failure documented
-        below — which is the point: in-domain training curves cannot reveal an
-        out-of-domain problem. (Training loss sits above validation loss because
-        it is measured on heavily augmented images and includes label smoothing,
-        while validation is clean and unsmoothed; the gap is not overfitting.)
+        <b>Obuka konvergira brzo i uredno.</b> Tačnost na validaciji prelazi 99 %
+        do sedme epohe. Ništa na ovom grafiku ne nagoveštava problem opisan u
+        nastavku — što je i suština: krive obuke unutar istog domena ne mogu
+        otkriti grešku van njega. (Gubitak na obuci je viši jer se meri na jako
+        augmentiranim slikama i uključuje ublažavanje oznaka, dok je validacija
+        čista; ta razlika nije preprilagođavanje.)
       </figcaption>
     </figure>
 
     <details>
-      <summary>What changed relative to the original notebook</summary>
+      <summary>Šta je promenjeno u odnosu na polazni rad</summary>
       <div class="table-scroll">
         <table>
           <thead>
-            <tr><th>Aspect</th><th>Original</th><th>This version</th></tr>
+            <tr><th>Aspekt</th><th>Polazni rad</th><th>Ova verzija</th></tr>
           </thead>
           <tbody>
-            <tr><td>Evaluation split</td><td>validation only</td><td>stratified 70/15/15 with a held-out test set</td></tr>
-            <tr><td>Metrics</td><td>accuracy</td><td>accuracy, balanced accuracy, per-class and macro precision / recall / F1, Cohen's κ, top-5, calibration</td></tr>
-            <tr><td>Augmentation</td><td>none</td><td>crop, flips, rotation, colour jitter, random erasing</td></tr>
-            <tr><td>Normalisation</td><td>none</td><td>ImageNet channel statistics</td></tr>
-            <tr><td>Precision</td><td>fp32</td><td>mixed precision (AMP)</td></tr>
-            <tr><td>Batch size</td><td>8</td><td>64</td></tr>
-            <tr><td>Model selection</td><td>final epoch</td><td>best validation macro F1, early stopping</td></tr>
-            <tr><td>Generalization</td><td>untested</td><td>cross-dataset evaluation on field photographs</td></tr>
-            <tr><td>Explainability</td><td>none</td><td>Grad-CAM saliency + background-attention measure</td></tr>
-            <tr><td>Epoch time</td><td>~90 min</td><td>~66 s</td></tr>
+            <tr><td>Evaluacija</td><td>samo validacija</td><td>stratifikovana podela 70/15/15 sa izdvojenim test skupom</td></tr>
+            <tr><td>Mere</td><td>tačnost</td><td>tačnost, balansirana tačnost, preciznost / odziv / F1 po klasama i makro, Koenova kapa, top-5, kalibracija</td></tr>
+            <tr><td>Augmentacija</td><td>nema</td><td>isecanje, preslikavanje, rotacija, promena boje, brisanje delova</td></tr>
+            <tr><td>Normalizacija</td><td>nema</td><td>ImageNet statistike kanala</td></tr>
+            <tr><td>Preciznost računa</td><td>fp32</td><td>mešovita preciznost (AMP)</td></tr>
+            <tr><td>Veličina serije</td><td>8</td><td>64</td></tr>
+            <tr><td>Izbor modela</td><td>poslednja epoha</td><td>najbolja makro F1 mera, uz rano zaustavljanje</td></tr>
+            <tr><td>Generalizacija</td><td>nije ispitana</td><td>unakrsna evaluacija na terenskim snimcima</td></tr>
+            <tr><td>Objašnjivost</td><td>nema</td><td>Grad-CAM mape pažnje i mera oslanjanja na pozadinu</td></tr>
           </tbody>
         </table>
       </div>
@@ -508,74 +560,72 @@
   </section>
 
   <section>
-    <h2><span class="num">03</span><span>In the lab, it is nearly perfect</span></h2>
+    <h2><span class="num">04</span><span>U laboratoriji je gotovo savršen</span></h2>
     <div class="measure">
       <p>
-        On the held-out PlantVillage test set the model reaches
-        <span class="tag-lab">{{VAL:test.accuracy:pct}} accuracy</span>,
-        {{VAL:test.macro_f1:f4}} macro F1 and a Cohen's κ of
-        {{VAL:test.cohen_kappa:f4}}. Top-5 accuracy is
-        {{VAL:test.top5_accuracy:pct}} — across {{VAL:test.n_samples:int}}
-        images there is not one where the correct class falls outside the
-        model's top five guesses.
+        Na izdvojenom test skupu model postiže
+        <span class="tag-lab">{{VAL:test.accuracy:pct}} tačnosti</span>,
+        {{VAL:test.macro_f1:f4}} makro F1 mere i Koenovu kapu
+        {{VAL:test.cohen_kappa:f4}}. Top-5 tačnost iznosi
+        {{VAL:test.top5_accuracy:pct}} — među {{VAL:test.n_samples:int}} slika ne
+        postoji nijedna kod koje tačna klasa nije među pet najverovatnijih.
       </p>
       <p>
-        Even the weakest classes are strong. The lowest per-class F1 is 0.950,
-        on <em>Corn — Cercospora leaf spot</em>, which the model occasionally
-        confuses with <em>Corn — Northern leaf blight</em>. That confusion is
-        botanically reasonable: the two produce similar elongated grey-brown
-        lesions on the same crop, and they are genuinely hard for people too.
+        I najslabije klase su vrlo dobre. Najniža F1 mera po klasi je 0,950, kod
+        sive pegavosti kukuruza, koju model povremeno meša sa severnom pegavošću
+        lista. Ta zamena je botanički razumljiva: obe bolesti daju slične
+        izdužene sivo-smeđe lezije na istoj kulturi i teško ih razlikuju i ljudi.
       </p>
       <p>
-        By every standard this project would normally apply, the work is done.
+        Po svim kriterijumima koje ova oblast uobičajeno primenjuje, rad bi ovde
+        bio završen.
       </p>
     </div>
   </section>
 
   <section>
-    <h2><span class="num">04</span><span>In the field, it collapses</span></h2>
+    <h2><span class="num">05</span><span>Na terenu se raspada</span></h2>
     <div class="measure">
       <p class="lede">
-        The same weights, the same 28 classes, photographs taken outdoors:
-        accuracy falls from {{VAL:lab.accuracy:pct}} to
-        <span class="tag-field">{{VAL:field.accuracy:pct}}</span>. That is a
-        {{VAL:gap.relative_drop:pct1}} relative drop, and it leaves the model
-        only about four times better than guessing.
+        Iste težine, istih 28 klasa, fotografije snimljene napolju: tačnost pada
+        sa {{VAL:lab.accuracy:pct}} na
+        <span class="tag-field">{{VAL:field.accuracy:pct}}</span>. To je
+        relativan pad od {{VAL:gap.relative_drop:pct1}}, čime model ostaje tek
+        oko četiri puta bolji od pukog pogađanja.
       </p>
     </div>
 
     <figure>
-      <img src="{{FIG:domain_gap}}" alt="Grouped bar chart comparing six metrics between lab and field photographs. Lab bars are near 1.0 across all six; field bars reach 0.15 accuracy, 0.14 balanced accuracy, 0.16 macro F1, 0.44 top-5 accuracy, 0.29 crop identification and 0.74 healthy versus diseased.">
+      <img src="{{FIG:domain_gap}}" alt="Grupisani stubičasti grafik koji poredi šest mera na laboratorijskim i terenskim snimcima. Laboratorijski stubići su blizu 1,0; terenski dostižu 0,15 tačnosti i 0,29 prepoznavanja biljke.">
       <figcaption>
-        <b>Every measure falls, but they do not fall equally.</b> The gentler
-        decline in "healthy vs diseased" is not resilience — see below.
+        <b>Sve mere padaju, ali ne podjednako.</b> Blaži pad kod pitanja
+        „zdravo ili bolesno“ nije otpornost — objašnjenje sledi ispod.
       </figcaption>
     </figure>
 
     <div class="table-scroll measure" style="max-width:none">
       <table>
-        <caption>The same model on both distributions, restricted to the 28 shared classes</caption>
+        <caption>Isti model na obe raspodele, ograničeno na istih 28 klasa</caption>
         <thead>
           <tr>
-            <th>Metric</th>
-            <th class="num-cell">Lab</th>
-            <th class="num-cell">Field</th>
-            <th class="num-cell">Retained</th>
+            <th>Mera</th>
+            <th class="num-cell">Laboratorija</th>
+            <th class="num-cell">Teren</th>
+            <th class="num-cell">Zadržano</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Accuracy</td><td class="num-cell col-lab">{{VAL:lab.accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.accuracy:f4}}</td><td class="num-cell retained">{{VAL:gap.retained_fraction:pct1}}</td></tr>
-          <tr><td>Balanced accuracy</td><td class="num-cell col-lab">{{VAL:lab.balanced_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.balanced_accuracy:f4}}</td><td class="num-cell retained">14.3%</td></tr>
-          <tr><td>Macro F1</td><td class="num-cell col-lab">{{VAL:lab.macro_f1:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_f1:f4}}</td><td class="num-cell retained">16.1%</td></tr>
-          <tr><td>Macro precision</td><td class="num-cell col-lab">{{VAL:lab.macro_precision:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_precision:f4}}</td><td class="num-cell retained">35.7%</td></tr>
-          <tr><td>Macro recall</td><td class="num-cell col-lab">{{VAL:lab.macro_recall:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_recall:f4}}</td><td class="num-cell retained">14.3%</td></tr>
-          <tr><td>Top-5 accuracy</td><td class="num-cell col-lab">{{VAL:lab.top5_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.top5_accuracy:f4}}</td><td class="num-cell retained">43.5%</td></tr>
-          <tr><td>Cohen's κ</td><td class="num-cell col-lab">{{VAL:lab.cohen_kappa:f4}}</td><td class="num-cell col-field">{{VAL:field.cohen_kappa:f4}}</td><td class="num-cell retained">13.1%</td></tr>
-          <tr><td>Crop identification</td><td class="num-cell col-lab">{{VAL:lab.crop_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.crop_accuracy:f4}}</td><td class="num-cell retained">28.8%</td></tr>
-          <tr><td>Healthy vs diseased</td><td class="num-cell col-lab">{{VAL:lab.healthy_vs_diseased_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.healthy_vs_diseased_accuracy:f4}}</td><td class="num-cell retained">74.2%</td></tr>
+          <tr><td>Tačnost</td><td class="num-cell col-lab">{{VAL:lab.accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.accuracy:f4}}</td><td class="num-cell retained">{{VAL:gap.retained_fraction:pct1}}</td></tr>
+          <tr><td>Balansirana tačnost</td><td class="num-cell col-lab">{{VAL:lab.balanced_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.balanced_accuracy:f4}}</td><td class="num-cell retained">14,3 %</td></tr>
+          <tr><td>Makro F1</td><td class="num-cell col-lab">{{VAL:lab.macro_f1:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_f1:f4}}</td><td class="num-cell retained">16,1 %</td></tr>
+          <tr><td>Makro preciznost</td><td class="num-cell col-lab">{{VAL:lab.macro_precision:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_precision:f4}}</td><td class="num-cell retained">35,7 %</td></tr>
+          <tr><td>Top-5 tačnost</td><td class="num-cell col-lab">{{VAL:lab.top5_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.top5_accuracy:f4}}</td><td class="num-cell retained">43,5 %</td></tr>
+          <tr><td>Koenova kapa</td><td class="num-cell col-lab">{{VAL:lab.cohen_kappa:f4}}</td><td class="num-cell col-field">{{VAL:field.cohen_kappa:f4}}</td><td class="num-cell retained">13,1 %</td></tr>
+          <tr><td>Prepoznavanje biljke</td><td class="num-cell col-lab">{{VAL:lab.crop_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.crop_accuracy:f4}}</td><td class="num-cell retained">28,8 %</td></tr>
+          <tr><td>Zdravo naspram bolesno</td><td class="num-cell col-lab">{{VAL:lab.healthy_vs_diseased_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.healthy_vs_diseased_accuracy:f4}}</td><td class="num-cell retained">74,2 %</td></tr>
           <tr>
-            <td>Control — foreign PlantVillage packaging</td>
-            <td class="num-cell col-lab" colspan="2" style="text-align:center">{{VAL:control.accuracy:f4}} accuracy · {{VAL:control.macro_f1:f4}} macro F1</td>
+            <td>Kontrola — druga kopija skupa PlantVillage</td>
+            <td class="num-cell col-lab" colspan="2" style="text-align:center">{{VAL:control.accuracy:f4}} tačnost · {{VAL:control.macro_f1:f4}} makro F1</td>
             <td class="num-cell retained">—</td>
           </tr>
         </tbody>
@@ -583,318 +633,307 @@
     </div>
 
     <div class="measure">
-      <h3>It is not "right plant, wrong disease"</h3>
+      <h3>Nije u pitanju „prava biljka, pogrešna bolest“</h3>
       <p>
-        The most forgiving question you can ask is which <em>crop</em> is in the
-        photograph — tomato or corn or apple, ignoring the disease entirely.
-        That is a 14-way problem with obvious visual cues: leaf shape, size,
-        venation. In the lab the model answers it {{VAL:lab.crop_accuracy:pct}}
-        of the time. In the field,
+        Najblaže pitanje koje se može postaviti jeste koja se <em>kultura</em>
+        nalazi na slici — paradajz, kukuruz ili jabuka, bez obzira na bolest. To
+        je zadatak sa 14 mogućih odgovora i očiglednim tragovima: oblik lista,
+        veličina, nervatura. U laboratoriji model na njega odgovara tačno u
+        {{VAL:lab.crop_accuracy:pct}} slučajeva. Na terenu — u
         <span class="tag-field">{{VAL:field.crop_accuracy:pct}}</span>.
-      </p>
-      <p>
-        So the failure is not a subtle mix-up between similar pathologies. The
-        model frequently cannot tell what plant it is looking at.
       </p>
 
       <div class="callout finding">
-        <p class="callout-title">The single most telling number</p>
+        <p class="callout-title">Najrečitiji podatak</p>
         <p>
-          <strong>34.9% of field photographs are classified as
-          "Background_without_leaves"</strong> — the PlantVillage class meaning
-          <em>there is no leaf in this image</em>. Shown a photograph of a
-          diseased plant growing in a field, the model's most common response is
-          to deny that it contains a leaf at all. It has learned "leaf" to mean
-          "a specimen isolated on a grey studio background", and a leaf attached
-          to a living plant does not qualify.
+          <strong>34,9 % terenskih fotografija model svrstava u klasu
+          „Background_without_leaves“</strong> — klasu koja u skupu PlantVillage
+          znači <em>na ovoj slici nema lista</em>. Suočen sa fotografijom bolesne
+          biljke koja raste u polju, najčešći odgovor modela jeste da na slici
+          uopšte nema lista. Naučio je da „list“ znači primerak izolovan na sivoj
+          studijskoj pozadini, pa list na živoj biljci za njega više nije list.
         </p>
       </div>
 
-      <h3>The one metric that looks survivable isn't</h3>
+      <h3>Jedina mera koja deluje prihvatljivo to nije</h3>
       <p>
-        Collapsing all 28 classes into a single binary — is this plant sick or
-        healthy? — gives 74.15% in the field, which sounds usable. It isn't.
-        67.07% of PlantDoc images are diseased, so answering "diseased" to every
-        single photograph scores 67.07%. The model predicts "diseased" 85.29% of
-        the time, achieving {{VAL:field.diseased_recall:pct}} recall at
-        {{VAL:field.diseased_precision:pct}} precision.
+        Svođenje svih 28 klasa na binarno pitanje — da li je biljka bolesna —
+        daje 74,15 % na terenu, što zvuči upotrebljivo. Nije. U skupu PlantDoc
+        67,07 % slika zaista jeste bolesno, pa odgovor „bolesna“ na svaku sliku
+        daje 67,07 %. Model predviđa „bolesna“ u 85,29 % slučajeva, uz odziv od
+        {{VAL:field.diseased_recall:pct}} i preciznost od
+        {{VAL:field.diseased_precision:pct}}.
       </p>
       <p>
-        Seven points above a constant answer is not a working triage tool. It is
-        a model with a heavy bias toward "diseased" that happens to be pointed at
-        a mostly-diseased dataset.
+        Sedam procentnih poena iznad konstantnog odgovora nije alat za trijažu.
+        To je model sa jakom sklonošću ka odgovoru „bolesna“, primenjen na skup u
+        kome je većina biljaka bolesna.
       </p>
     </div>
 
     <figure>
-      <img src="{{FIG:per_class_f1}}" alt="Horizontal bar chart of per-class F1 for 28 classes, lab versus field, sorted by field performance. Lab bars are near 1.0 throughout; field bars are near zero for most classes with a handful reaching 0.3 to 0.5.">
+      <img src="{{FIG:per_class_f1}}" alt="Horizontalni stubičasti grafik F1 mere za 28 klasa, laboratorija naspram terena, sortirano po uspehu na terenu.">
       <figcaption>
-        <b>The collapse is broad, not concentrated.</b> Lab F1 sits near 1.0 for
-        every class. In the field a handful of classes retain partial signal —
-        typically those with large, high-contrast lesions — while most fall to
-        near zero.
+        <b>Pad je širok, a ne skoncentrisan.</b> F1 mera u laboratoriji je blizu
+        1,0 za svaku klasu. Na terenu nekoliko klasa zadržava delimičan signal —
+        obično one sa velikim, kontrastnim lezijama — dok većina pada blizu nule.
       </figcaption>
     </figure>
 
     <details>
-      <summary>Does restricting the output to the 28 possible classes help?</summary>
+      <summary>Pomaže li ograničavanje izlaza na 28 mogućih klasa?</summary>
       <p>
-        Somewhat, and revealingly. Masking the model's output so it can only
-        choose among the 28 classes that actually occur in PlantDoc lifts
-        accuracy from {{VAL:field.accuracy:pct}} to
-        <strong>{{VAL:restricted.accuracy:pct}}</strong>. About six points of the
-        error came from confidently predicting classes that could not possibly
-        be correct — most of them <code>Background_without_leaves</code>.
+        Donekle, i to poučno. Maskiranje izlaza tako da model može birati samo
+        među 28 klasa koje se u skupu PlantDoc zaista pojavljuju podiže tačnost
+        sa {{VAL:field.accuracy:pct}} na
+        <strong>{{VAL:restricted.accuracy:pct}}</strong>. Oko šest procentnih
+        poena greške poticalo je od samouverenog predviđanja klasa koje tu nisu
+        ni mogle biti tačne — najčešće
+        <code>Background_without_leaves</code>.
       </p>
       <p>
-        The remaining 79% error is genuine confusion among plausible options, so
-        constraining the label space is not a fix.
+        Preostalih blizu 79 % greške je stvarna zabuna među mogućim odgovorima,
+        pa ograničavanje skupa oznaka nije rešenje.
       </p>
     </details>
   </section>
 
   <section>
-    <h2><span class="num">05</span><span>Benchmark rank does not predict field rank</span></h2>
+    <h2><span class="num">06</span><span>Referentni skup pogrešno rangira modele</span></h2>
     <div class="measure">
       <p>
-        Everything above concerns one model. The obvious follow-up is whether a
-        different architecture escapes the problem — so the original project's
-        from-scratch CNN was trained under identical conditions: same split,
-        same augmentation, same schedule, same twelve epochs, same
-        macro-F1 checkpoint selection. The only differences are the architecture
-        and the absence of ImageNet initialisation.
+        Sve prethodno odnosi se na jedan model. Prirodno pitanje je da li druga
+        arhitektura izbegava problem — pa je mreža iz polaznog rada, sa
+        nasumičnom inicijalizacijom, obučena pod istim uslovima: ista podela,
+        ista augmentacija, isti raspored stope učenja, istih dvanaest epoha, isti
+        kriterijum izbora modela. Razlikuju se samo arhitektura i odsustvo
+        pretreniranja na skupu ImageNet.
       </p>
       <p>
-        On the benchmark the from-scratch model
-        <em>wins</em>: {{VAL:alt.test.accuracy:pct}} against
-        {{VAL:test.accuracy:pct}}, with fewer parameters
-        ({{VAL:alt.parameters:int}} against {{VAL:meta.parameters:int}}). On the
-        shared 28 classes the two are indistinguishable —
-        {{VAL:alt.lab.accuracy:f4}} against {{VAL:lab.accuracy:f4}}.
+        Na referentnom skupu model bez pretreniranja <em>pobeđuje</em>:
+        {{VAL:alt.test.accuracy:pct}} naspram {{VAL:test.accuracy:pct}}, i to sa
+        manje parametara ({{VAL:alt.parameters:int}} naspram
+        {{VAL:meta.parameters:int}}). Na istih 28 klasa praktično se ne
+        razlikuju — {{VAL:alt.lab.accuracy:f4}} naspram {{VAL:lab.accuracy:f4}}.
       </p>
       <p>
-        In the field they are not close at all. The pretrained model manages
-        <span class="tag-lab">{{VAL:field.accuracy:pct}}</span>; the scratch
-        model <span class="tag-field">{{VAL:alt.field.accuracy:pct}}</span> — a
-        {{VAL:alt.gap.relative_drop:pct1}} collapse against
+        Na terenu nisu ni blizu. Pretrenirani model postiže
+        <span class="tag-lab">{{VAL:field.accuracy:pct}}</span>, a model bez
+        pretreniranja <span class="tag-field">{{VAL:alt.field.accuracy:pct}}</span>
+        — pad od {{VAL:alt.gap.relative_drop:pct1}} naspram
         {{VAL:gap.relative_drop:pct1}}.
       </p>
     </div>
 
     <figure>
-      <img src="{{FIG:model_comparison}}" alt="Grouped bar chart comparing two architectures. Both show lab accuracy of 0.996. Field accuracy is 0.148 for the pretrained ResNet18 and 0.098 for the from-scratch ResNet9.">
+      <img src="{{FIG:model_comparison}}" alt="Grupisani stubičasti grafik dva modela. Oba imaju laboratorijsku tačnost 0,996. Terenska tačnost je 0,148 za pretrenirani ResNet18 i 0,098 za ResNet9 bez pretreniranja.">
       <figcaption>
-        <b>Identical on the benchmark, 50% apart in the field.</b> Selecting a
-        model the way this field normally does — by held-out benchmark accuracy
-        — picks the scratch network, which is a third less accurate on real
-        photographs.
+        <b>Jednaki na referentnom skupu, 50 % razlike na terenu.</b> Izbor modela
+        onako kako se u ovoj oblasti uobičajeno vrši — prema tačnosti na
+        izdvojenom test skupu — bira mrežu koja je na stvarnim fotografijama za
+        trećinu lošija.
       </figcaption>
     </figure>
 
     <div class="measure">
       <p>
-        This is the practical sting in the whole experiment. It is not merely
-        that the benchmark number is inflated; the benchmark actively
-        <em>misranks</em>. Whatever ImageNet pretraining contributes does not
-        show up in the lab score at all, and only becomes visible once the
-        photographs change. A leaderboard built on PlantVillage would order
-        these two models backwards.
+        Ovo je praktično najvažniji nalaz celog eksperimenta. Nije problem samo u
+        tome što je brojka sa referentnog skupa naduvana — referentni skup
+        aktivno <em>obrće redosled</em>. Ono što donosi pretreniranje na skupu
+        ImageNet uopšte se ne vidi u laboratorijskom rezultatu i postaje vidljivo
+        tek kada se fotografije promene.
       </p>
     </div>
   </section>
 
   <section>
-    <h2><span class="num">06</span><span>It does not know that it is wrong</span></h2>
+    <h2><span class="num">07</span><span>Model nije svestan sopstvenih grešaka</span></h2>
     <div class="measure">
       <p>
-        A model that fails is manageable if it fails loudly. The dangerous
-        failure is the confident one — and that is what happens here.
+        Model koji greši može se kontrolisati ako svoju nesigurnost prijavljuje.
+        Opasna je samouverena greška — a upravo to se ovde dešava.
       </p>
       <p>
-        On lab images the model is well calibrated: expected calibration error
-        is {{VAL:lab_cal.expected_calibration_error:f4}}, and of the
-        {{VAL:lab_cal.fraction_above_90_confidence:pct1}} of predictions made
-        with over 90% confidence,
-        <span class="tag-lab">{{VAL:lab_cal.accuracy_above_90_confidence:pct1}}
-        are correct</span>. Confidence means what it says.
+        Na laboratorijskim slikama model je dobro kalibrisan: greška kalibracije
+        iznosi {{VAL:lab_cal.expected_calibration_error:f4}}, a od
+        {{VAL:lab_cal.fraction_above_90_confidence:pct1}} predviđanja datih sa
+        pouzdanošću preko 90 %, tačno je
+        <span class="tag-lab">{{VAL:lab_cal.accuracy_above_90_confidence:pct1}}</span>.
+        Prijavljena pouzdanost znači ono što tvrdi.
       </p>
       <p>
-        On field images calibration error rises more than tenfold to
-        {{VAL:field_cal.expected_calibration_error:f4}}. The model still makes
-        high-confidence claims on
-        {{VAL:field_cal.fraction_above_90_confidence:pct1}} of photographs — and
-        of those, only
-        <span class="tag-field">{{VAL:field_cal.accuracy_above_90_confidence:pct1}}
-        are correct</span>. It remains
-        {{VAL:field_cal.mean_confidence_when_wrong:pct1}} confident, on average,
-        on the images it gets wrong.
+        Na terenskim slikama greška kalibracije raste više od deset puta, na
+        {{VAL:field_cal.expected_calibration_error:f4}}. Model i dalje daje ocenu
+        veću od 90 % za {{VAL:field_cal.fraction_above_90_confidence:pct1}}
+        fotografija — a od njih je tačno svega
+        <span class="tag-field">{{VAL:field_cal.accuracy_above_90_confidence:pct1}}</span>.
+        Na slikama koje pogreši ostaje u proseku
+        {{VAL:field_cal.mean_confidence_when_wrong:pct1}} siguran.
       </p>
     </div>
 
     <figure>
-      <img src="{{FIG:calibration}}" alt="Two reliability diagrams. The lab panel tracks the perfect-calibration diagonal closely. The field panel sits far below the diagonal: at 97% predicted confidence, observed accuracy is roughly 27%.">
+      <img src="{{FIG:calibration}}" alt="Dva dijagrama pouzdanosti. Levi panel prati dijagonalu savršene kalibracije. Desni je znatno ispod nje: pri 97 % prijavljene pouzdanosti stvarna tačnost je oko 27 %.">
       <figcaption>
-        <b>Reliability diagrams — confidence against correctness.</b> Points on
-        the dashed diagonal are perfectly calibrated. The lab panel hugs it. The
-        field panel sits far below: at the highest confidence bin the model is
-        right about a quarter of the time. A deployed app would show these
-        diagnoses without any indication of doubt.
+        <b>Prijavljena pouzdanost naspram stvarne tačnosti.</b> Tačke na
+        isprekidanoj dijagonali označavaju savršenu kalibraciju. Levi panel je
+        prati. Desni je duboko ispod: u najvišem opsegu pouzdanosti model je
+        tačan u oko četvrtini slučajeva. Aplikacija bi ovakve dijagnoze
+        prikazivala bez ikakvog znaka nesigurnosti.
       </figcaption>
     </figure>
   </section>
 
   <section>
-    <h2><span class="num">07</span><span>What the model is actually looking at</span></h2>
+    <h2><span class="num">08</span><span>Na šta se model zapravo oslanja</span></h2>
     <div class="measure">
       <p>
-        Accuracy cannot distinguish a model that reads lesions from one that
-        reads backdrops — both score well in the lab. Grad-CAM answers the
-        question directly by showing which pixels the predicted class score
-        depends on.
+        Tačnost ne može razlikovati model koji čita lezije na listu od modela koji
+        čita pozadinu — oba postižu visok rezultat u laboratoriji. Grad-CAM
+        odgovara na to pitanje neposredno, prikazujući od kojih piksela zavisi
+        ocena predviđene klase.
       </p>
     </div>
 
     <figure>
-      <img src="{{FIG:gradcam_plantvillage}}" alt="A grid of eight PlantVillage leaf photographs with Grad-CAM heatmap overlays beneath each. Attention forms broad blobs covering whole leaf silhouettes rather than concentrating on lesions.">
+      <img src="{{FIG:gradcam_plantvillage}}" alt="Mreža laboratorijskih snimaka lista sa Grad-CAM mapama pažnje ispod svakog. Pažnja pokriva ceo obris lista, a ne pojedinačne lezije.">
       <figcaption>
-        <b>Lab images: attention covers the leaf silhouette, not the disease.</b>
-        The heatmaps form broad blobs over the whole specimen rather than
-        concentrating on lesions — consistent with a model keyed to overall
-        shape and colour against a predictable background. Note the second
-        panel: PlantVillage's <code>Background_without_leaves</code> class
-        contains stock photographs, in this case of sheep.
+        <b>Laboratorijski snimci: pažnja pokriva obris lista, ne bolest.</b>
+        Mape čine široke mrlje preko celog primerka umesto da se koncentrišu na
+        lezije — što odgovara modelu vezanom za opšti oblik i boju naspram
+        predvidive pozadine. Drugi panel prikazuje klasu
+        <code>Background_without_leaves</code>, koja sadrži stok fotografije, u
+        ovom slučaju ovaca.
       </figcaption>
     </figure>
 
     <figure>
-      <img src="{{FIG:gradcam_plantdoc}}" alt="A grid of eight PlantDoc field photographs with Grad-CAM overlays. Most predictions are marked incorrect in red. Attention lands on soil, fingers and background foliage.">
+      <img src="{{FIG:gradcam_plantdoc}}" alt="Mreža terenskih fotografija sa Grad-CAM mapama. Većina predviđanja je pogrešna. Pažnja pada na zemlju, prste i okolno rastinje.">
       <figcaption>
-        <b>Field images: attention scatters onto whatever is present.</b> Six of
-        these eight are wrong. A potato plant growing in soil is called
-        "Background without leaves", with attention on the ground between the
-        stems. An apple leaf on a white stock-photo background — complete with
-        watermark — becomes "Pepper, bell / healthy". Where the model does
-        succeed, as on the corn blight in the sixth column, attention sits
-        squarely on the lesion stripe.
+        <b>Terenski snimci: pažnja se rasipa na sve što je u kadru.</b> Šest od
+        osam predviđanja je pogrešno. Krompir koji raste u zemlji označen je kao
+        „Background without leaves“, sa pažnjom na tlu između stabljika. List
+        jabuke na beloj stok pozadini — zajedno sa vodenim žigom — postaje
+        „Pepper, bell / healthy“. Tamo gde model uspeva, kao kod pegavosti
+        kukuruza, pažnja jeste na samoj leziji.
       </figcaption>
     </figure>
 
     <div class="measure">
       <p>
-        The quantitative version of the same observation: measuring what
-        fraction of Grad-CAM attention mass falls in the outer border of the
-        frame, lab images score 0.649 against 0.667 for field images, where 0.750
-        would mean attention spread perfectly evenly. Field attention is
-        measurably more diffuse — the model has no centred specimen to lock
-        onto, so its evidence smears across the frame.
+        Kvantitativno: udeo Grad-CAM pažnje koji pada na rubni deo kadra iznosi
+        0,649 za laboratorijske i 0,667 za terenske snimke, pri čemu bi 0,750
+        značilo potpuno ravnomernu raspodelu. Na terenu je pažnja merljivo
+        rasutija — model nema centrirani primerak na koji bi se oslonio, pa se
+        dokazi razlivaju po celoj slici.
       </p>
     </div>
   </section>
 
   <section>
-    <h2><span class="num">08</span><span>What this means</span></h2>
+    <h2><span class="num">09</span><span>Šta ovo znači</span></h2>
     <div class="measure">
       <p class="lede">
-        The benchmark score was never measuring disease recognition. It was
-        measuring how well the model had learned a photographic convention.
+        Rezultat sa referentnog skupa nikada nije merio prepoznavanje bolesti.
+        Merio je koliko je dobro model naučio jednu fotografsku konvenciju.
       </p>
       <p>
-        This matters beyond one dataset, because the PlantVillage number is the
-        number that gets cited. A 99% accuracy claim implies a tool a farmer
-        could point at a plant. The evidence here says that tool would be wrong
-        six times in seven, would frequently deny that it was looking at a plant
-        at all, and would report no uncertainty while doing it.
+        To ima značaja izvan jednog skupa podataka, jer se upravo ta brojka
+        najčešće citira. Tvrdnja o 99 % tačnosti podrazumeva alat koji
+        poljoprivrednik može uperiti u biljku. Rezultati pokazuju da bi takav
+        alat grešio u šest od sedam slučajeva, često tvrdio da na slici uopšte
+        nema lista, i pritom ne bi prijavljivao nikakvu nesigurnost.
       </p>
 
-      <h3>An observation on training longer</h3>
+      <h3>Zapažanje o dužoj obuci</h3>
       <p>
-        The epoch-1 checkpoint scored 93.08% in the lab and 15.22% in the field.
-        The final epoch-{{VAL:meta.best_epoch:raw}} checkpoint scores
-        {{VAL:lab.accuracy:pct}} in the lab and {{VAL:field.accuracy:pct}} in the
-        field. Eleven further epochs bought 6.5 points of benchmark accuracy and
-        cost 0.4 points of field accuracy.
+        Model posle prve epohe postizao je 93,08 % u laboratoriji i 15,22 % na
+        terenu. Konačni model iz epohe {{VAL:meta.best_epoch:raw}} postiže
+        {{VAL:lab.accuracy:pct}} i {{VAL:field.accuracy:pct}}. Jedanaest dodatnih
+        epoha donelo je 6,5 procentnih poena na referentnom skupu i oduzelo 0,4
+        poena na terenu.
       </p>
       <p>
-        This is a single comparison and the field difference is small enough to
-        be noise. But the direction is worth stating plainly: the additional
-        training produced no transferable improvement whatsoever. It fit the
-        studio distribution harder.
+        Radi se o jednom poređenju i razlika na terenu je dovoljno mala da može
+        biti šum. Ali smer je vredan pomena: dodatna obuka nije donela nikakvo
+        prenosivo poboljšanje. Samo je čvršće prilagodila model studijskoj
+        raspodeli.
       </p>
 
-      <h3>What would actually help</h3>
+      <h3>Šta bi stvarno pomoglo</h3>
       <ul>
-        <li><strong>Train on field data.</strong> The gap is a data problem before it is a modelling problem. PlantDoc is small (2,569 images), but even a modest amount of in-the-wild data during training changes what the model can key on.</li>
-        <li><strong>Report cross-dataset numbers as standard.</strong> An in-domain test split cannot detect this failure, and as §5 shows it cannot even rank two models correctly. Nothing in §2 or §3 hinted at §4.</li>
-        <li><strong>Segment the leaf before classifying.</strong> Removing the background removes the shortcut, at the cost of needing segmentation labels.</li>
-        <li><strong>Calibrate, and refuse to answer.</strong> An abstention threshold would convert most confident errors into "unsure" — far more useful in the field than a confident wrong diagnosis.</li>
+        <li><strong>Uključiti terenske snimke u obuku.</strong> Problem je pre svega u podacima, a tek onda u modelu. PlantDoc je mali (2.569 slika), ali i skromna količina stvarnih snimaka menja ono na šta se model može osloniti.</li>
+        <li><strong>Rezultate na nezavisnom skupu prijavljivati kao standard.</strong> Podela unutar istog skupa ne može otkriti ovaj problem, a kako pokazuje odeljak 06, ne može ni ispravno rangirati modele.</li>
+        <li><strong>Segmentacija lista pre klasifikacije.</strong> Uklanjanje pozadine uklanja i prečicu, uz cenu potrebe za dodatnim oznakama.</li>
+        <li><strong>Kalibracija i pravo na odbijanje odgovora.</strong> Prag pouzdanosti pretvorio bi većinu samouverenih grešaka u „nisam siguran“ — na terenu daleko korisnije od pogrešne a samouverene dijagnoze.</li>
       </ul>
 
       <div class="callout">
-        <p class="callout-title">Limitations</p>
+        <p class="callout-title">Ograničenja</p>
         <p>
-          PlantDoc is not a clean instrument. Its labels are noisier than
-          PlantVillage's, some images are stock photographs rather than field
-          captures, and its class definitions were mapped onto PlantVillage's by
-          hand. Part of the measured gap is dataset quality rather than domain
-          shift. But label noise cannot explain a model calling a third of the
-          images leafless, nor crop identification falling to 28.8% — those
-          require the model to be reading something other than the plant.
+          PlantDoc nije savršen instrument. Njegove oznake su šumovitije od
+          PlantVillage, deo slika su stok fotografije umesto stvarnih terenskih
+          snimaka, a preslikavanje klasa urađeno je ručno. Jedan deo izmerene
+          razlike potiče od kvaliteta podataka, a ne isključivo od promene
+          domena. Ipak, šum u oznakama ne može objasniti to što model trećinu
+          slika proglašava slikama bez lista, niti pad prepoznavanja biljke na
+          {{VAL:field.crop_accuracy:pct}} — za to je potrebno da model čita nešto
+          drugo, a ne biljku.
         </p>
       </div>
     </div>
   </section>
 
   <section>
-    <h2><span class="num">09</span><span>Reproducing this</span></h2>
+    <h2><span class="num">10</span><span>Reprodukcija</span></h2>
     <div class="measure">
       <p>
-        Both datasets are plain parquet files. Some Hugging Face datasets —
-        including the most-downloaded PlantVillage mirror — ship a
-        <code>.py</code> loading script that executes on your machine if you
-        pass <code>trust_remote_code=True</code>. Nothing here does that; the
-        parquet-only sources were chosen deliberately.
+        Svi skupovi su obični parquet fajlovi. Pojedini skupovi na platformi
+        Hugging Face — uključujući i najpreuzimaniju kopiju skupa PlantVillage —
+        isporučuju <code>.py</code> skriptu koja se izvršava lokalno ako se
+        prosledi <code>trust_remote_code=True</code>. Ovde to nije urađeno.
       </p>
       <pre><code>python src/prepare_data.py --data-root data
 python src/train.py --model resnet18 --epochs 12 --run-name resnet18_pretrained
 python src/cross_eval.py --model resnet18 --run-dir results/resnet18_pretrained
-python src/gradcam_report.py --model resnet18 --run-dir results/resnet18_pretrained
-python src/figures.py --run-dir results/resnet18_pretrained</code></pre>
+python src/gradcam_report.py --model resnet18 --run-dir results/resnet18_pretrained --lang sr
+python src/figures.py --run-dir results/resnet18_pretrained --lang sr</code></pre>
       <p>
-        Every figure quoted above is substituted into this page from that JSON
-        at build time rather than typed in by hand, so the prose cannot drift
-        away from the run that produced it.
+        Svaka brojka navedena iznad ubacuje se u ovu stranicu iz tog JSON-a u
+        trenutku izgradnje, umesto da se prekucava, pa tekst ne može odlutati od
+        rezultata koji ga je proizveo.
       </p>
     </div>
 
     <figure>
-      <img src="{{FIG:confusion_plantvillage}}" alt="A 39 by 39 row-normalised confusion matrix for the lab test set, showing a strong unbroken diagonal.">
+      <img src="{{FIG:confusion_plantvillage}}" alt="Matrica konfuzije 39 puta 39 na laboratorijskom test skupu, sa jakom neprekinutom dijagonalom.">
       <figcaption>
-        <b>Lab confusion matrix, row-normalised.</b> An almost unbroken diagonal
-        across all 39 classes.
+        <b>Matrica konfuzije, laboratorija.</b> Normalizovano po redovima.
+        Gotovo neprekinuta dijagonala kroz svih 39 klasa.
       </figcaption>
     </figure>
 
     <figure>
-      <img src="{{FIG:confusion_plantdoc}}" alt="A 28 by 28 row-normalised confusion matrix for field photographs, showing a faint diagonal and heavy scattered off-diagonal mass.">
+      <img src="{{FIG:confusion_plantdoc}}" alt="Matrica konfuzije 28 puta 28 na terenskim snimcima, sa jedva vidljivom dijagonalom i rasutom masom van nje.">
       <figcaption>
-        <b>Field confusion matrix, row-normalised.</b> The diagonal is barely
-        visible. Prediction mass concentrates in vertical bands — a few classes
-        absorbing images from everywhere, which is what a model does when its
-        features stop discriminating.
+        <b>Matrica konfuzije, teren.</b> Dijagonala je jedva vidljiva. Masa
+        predviđanja skuplja se u vertikalne trake — nekoliko klasa upija slike
+        odasvud, što je ono što model radi kada njegova obeležja prestanu da
+        razlikuju.
       </figcaption>
     </figure>
   </section>
 
   <footer>
     <p>
-      Data: <span class="mono">Project-AgML/plant_village_classification</span>
-      (55,448 images, 39 classes; Hughes &amp; Salathé 2015) and
+      Podaci: <span class="mono">Project-AgML/plant_village_classification</span>
+      (55.448 slika, 39 klasa; Hughes i Salathé, 2015) i
       <span class="mono">Project-AgML/plant_doc_classification</span>
-      (2,569 images, 28 classes, CC-BY-SA-4.0; Singh et al. 2020).
-      Model: ImageNet-pretrained ResNet18,
-      {{VAL:meta.parameters:int}} trainable parameters, trained
-      {{VAL:meta.train_minutes:f1}} minutes on an RTX 4060.
-      Grad-CAM after Selvaraju et al. 2017.
+      (2.569 slika, 28 klasa, CC-BY-SA-4.0; Singh i saradnici, 2020).
+      Kontrolni skup: <span class="mono">Hemg/new-plant-diseases-dataset</span>.
+      Model: ResNet18 pretreniran na skupu ImageNet,
+      {{VAL:meta.parameters:int}} parametara koji se uče.
+      Grad-CAM prema Selvaraju i saradnicima, 2017.
     </p>
   </footer>
 

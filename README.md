@@ -162,10 +162,11 @@ Generate Grad-CAM saliency maps and background-attention statistics:
 python src/gradcam_report.py --model resnet18 --run-dir results/resnet18_pretrained
 ```
 
-Render all figures:
+Render all figures. `--lang sr` writes Serbian-labelled copies to
+`figures_sr/`, which is what the reports use:
 
 ```bash
-python src/figures.py --run-dir results/resnet18_pretrained --compare-dirs results/resnet9_scratch
+python src/figures.py --run-dir results/resnet18_pretrained --compare-dirs results/resnet9_scratch --lang sr
 ```
 
 Print every reported number, read back from the JSON:
@@ -179,8 +180,11 @@ and the figures are inlined, so the page is self-contained and cannot quote a
 number the data no longer supports:
 
 ```bash
-python src/build_report.py --template results/report.template.html --figures results/resnet18_pretrained/figures --run-dir results/resnet18_pretrained --out results/report.html
+python src/build_report.py --template results/report.template.html --figures results/resnet18_pretrained/figures_sr --run-dir results/resnet18_pretrained --compare-dir results/resnet9_scratch --out results/report.html
 ```
+
+Both write-ups are in Serbian: `results/report.html` and the illustrated
+two-column document `results/izvestaj.docx`.
 
 ## Layout
 
@@ -197,7 +201,8 @@ src/
   gradcam_report.py  saliency figures + background-attention statistic
   figures.py         all report figures
   summarize.py       report-ready tables read back from the JSON
-  build_report.py    inlines figures into the HTML report
+  i18n.py            figure text in English and Serbian
+  build_report.py    substitutes measured values and inlines figures
   check_report.py    tag-balance and theme-token checks on the report template
 results/<run>/
   best.pt            best-macro-F1 checkpoint
@@ -205,10 +210,12 @@ results/<run>/
   test_metrics.json  full in-domain metrics
   cross_eval.json    the four-way generalization comparison
   gradcam_stats.json background-attention measurements
-  figures/           rendered charts
+  figures/           rendered charts, English labels
+  figures_sr/        the same charts with Serbian labels
 results/
-  report.html        the written report
-  izvestaj.docx      two-page summary in Serbian
+  report.html        the full write-up (Serbian)
+  izvestaj.docx      illustrated document version (Serbian)
+  izvestaj.pdf       the same, as PDF
 ```
 
 ## Data sources

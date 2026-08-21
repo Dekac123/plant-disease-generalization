@@ -18,6 +18,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import LinearSegmentedColormap
 
+import i18n
+
 # --- palette -----------------------------------------------------------
 SERIES_1 = "#2a78d6"   # blue   -- in-domain / PlantVillage
 SERIES_2 = "#eb6834"   # orange -- out-of-domain / PlantDoc
@@ -61,7 +63,7 @@ def apply_style() -> None:
     )
 
 
-def training_curves(history: list[dict], out_path: Path) -> None:
+def training_curves(history: list[dict], out_path: Path, t: dict) -> None:
     """Loss and validation quality across epochs.
 
     Two panels rather than twin y-axes: loss and F1 have unrelated scales, and
@@ -72,22 +74,22 @@ def training_curves(history: list[dict], out_path: Path) -> None:
     fig, (ax_loss, ax_quality) = plt.subplots(1, 2, figsize=(11, 4))
 
     ax_loss.plot(epochs, [h["train_loss"] for h in history],
-                 color=SERIES_1, linewidth=2, marker="o", markersize=4, label="train")
+                 color=SERIES_1, linewidth=2, marker="o", markersize=4, label=t["train"])
     ax_loss.plot(epochs, [h["val_loss"] for h in history],
-                 color=SERIES_2, linewidth=2, marker="s", markersize=4, label="validation")
-    ax_loss.set_xlabel("epoch")
-    ax_loss.set_ylabel("cross-entropy loss")
-    ax_loss.set_title("Loss")
+                 color=SERIES_2, linewidth=2, marker="s", markersize=4, label=t["validation"])
+    ax_loss.set_xlabel(t["epoch"])
+    ax_loss.set_ylabel(t["loss_axis"])
+    ax_loss.set_title(t["loss_panel"])
     ax_loss.legend()
 
     ax_quality.plot(epochs, [h["val_accuracy"] for h in history],
-                    color=SERIES_1, linewidth=2, marker="o", markersize=4, label="accuracy")
+                    color=SERIES_1, linewidth=2, marker="o", markersize=4, label=t["accuracy"])
     ax_quality.plot(epochs, [h["val_macro_f1"] for h in history],
-                    color=SERIES_2, linewidth=2, marker="s", markersize=4, label="macro F1")
-    ax_quality.set_xlabel("epoch")
-    ax_quality.set_ylabel("validation score")
+                    color=SERIES_2, linewidth=2, marker="s", markersize=4, label=t["macro_f1"])
+    ax_quality.set_xlabel(t["epoch"])
+    ax_quality.set_ylabel(t["val_score_axis"])
     ax_quality.set_ylim(0, 1.02)
-    ax_quality.set_title("Validation quality")
+    ax_quality.set_title(t["val_panel"])
     ax_quality.legend()
 
     # Label the final value directly rather than every point.
@@ -99,12 +101,12 @@ def training_curves(history: list[dict], out_path: Path) -> None:
                     textcoords="offset points", xytext=(6, 0),
                     fontsize=8, color=colour, va="center")
 
-    fig.suptitle("Training history", fontsize=12)
+    fig.suptitle(t["training_history"], fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     _save(fig, out_path)
 
 
-def confusion_heatmap(metrics: dict, title: str, out_path: Path) -> None:
+def confusion_heatmap(metrics: dict, title: str, out_path: Path, t: dict) -> None:
     """Row-normalised confusion matrix (i.e. per-class recall on the diagonal)."""
     matrix = np.array(metrics["confusion_matrix"], dtype=float)
     labels = [l.replace("___", " / ").replace("_", " ") for l in metrics["confusion_labels"]]
@@ -123,29 +125,29 @@ def confusion_heatmap(metrics: dict, title: str, out_path: Path) -> None:
     ax.set_yticks(range(n))
     ax.set_xticklabels(labels, rotation=90, fontsize=6)
     ax.set_yticklabels(labels, fontsize=6)
-    ax.set_xlabel("predicted")
-    ax.set_ylabel("true")
+    ax.set_xlabel(t["predicted"])
+    ax.set_ylabel(t["true"])
     ax.set_title(title, fontsize=12, pad=14)
 
     cbar = fig.colorbar(im, ax=ax, fraction=0.032, pad=0.02)
-    cbar.set_label("fraction of true class", color=SECONDARY_INK, fontsize=8)
+    cbar.set_label(t["cm_colorbar"], color=SECONDARY_INK, fontsize=8)
     cbar.outline.set_visible(False)
 
     _save(fig, out_path)
 
 
-def domain_gap_chart(cross_eval: dict, out_path: Path) -> None:
+def domain_gap_chart(cross_eval: dict, out_path: Path, t: dict) -> None:
     """Headline comparison: the same model on lab images vs field images."""
     in_domain = cross_eval["results"]["plantvillage_test_shared"]
     out_domain = cross_eval["results"]["plantdoc_open"]
 
     measures = [
-        ("Accuracy", "accuracy"),
-        ("Balanced\naccuracy", "balanced_accuracy"),
-        ("Macro F1", "macro_f1"),
-        ("Top-5\naccuracy", "top5_accuracy"),
-        ("Crop\nidentification", "crop_accuracy"),
-        ("Healthy vs\ndiseased", "healthy_vs_diseased_accuracy"),
+        (t["m_accuracy"], "accuracy"),
+        (t["m_balanced"], "balanced_accuracy"),
+        (t["m_macro_f1"], "macro_f1"),
+        (t["m_top5"], "top5_accuracy"),
+        (t["m_crop"], "crop_accuracy"),
+        (t["m_binary"], "healthy_vs_diseased_accuracy"),
     ]
 
     labels = [m[0] for m in measures]
@@ -158,9 +160,9 @@ def domain_gap_chart(cross_eval: dict, out_path: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(10, 4.6))
     bars_lab = ax.bar(x - width / 2 - gap, lab_values, width,
-                      label="PlantVillage (lab)", color=SERIES_1)
+                      label=t["lab_series"], color=SERIES_1)
     bars_field = ax.bar(x + width / 2 + gap, field_values, width,
-                        label="PlantDoc (field)", color=SERIES_2)
+                        label=t["field_series"], color=SERIES_2)
 
     for bars, values in ((bars_lab, lab_values), (bars_field, field_values)):
         for bar, value in zip(bars, values):
@@ -171,20 +173,16 @@ def domain_gap_chart(cross_eval: dict, out_path: Path) -> None:
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8)
-    ax.set_ylabel("score")
+    ax.set_ylabel(t["score_axis"])
     ax.set_ylim(0, 1.08)
-    ax.set_title(
-        "Same model, same 28 classes — lab photographs vs field photographs",
-        fontsize=12,
-        pad=30,
-    )
+    ax.set_title(t["domain_gap_title"], fontsize=12, pad=30)
     # Outside the axes: the lab bars reach the top and would sit under it.
     ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2)
 
     _save(fig, out_path)
 
 
-def per_class_f1_chart(cross_eval: dict, out_path: Path) -> None:
+def per_class_f1_chart(cross_eval: dict, out_path: Path, t: dict) -> None:
     """Per-class F1 in both domains, so the collapse can be read class by class."""
     in_domain = {r["class"]: r for r in
                  cross_eval["results"]["plantvillage_test_shared"]["per_class"]}
@@ -201,27 +199,29 @@ def per_class_f1_chart(cross_eval: dict, out_path: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(9, max(5.0, len(shared) * 0.34)))
     ax.barh(y + height / 2 + gap, [in_domain[c]["f1"] for c in shared], height,
-            label="PlantVillage (lab)", color=SERIES_1)
+            label=t["lab_series"], color=SERIES_1)
     ax.barh(y - height / 2 - gap, [out_domain[c]["f1"] for c in shared], height,
-            label="PlantDoc (field)", color=SERIES_2)
+            label=t["field_series"], color=SERIES_2)
 
     ax.set_yticks(y)
     ax.set_yticklabels(labels, fontsize=7)
     ax.invert_yaxis()
-    ax.set_xlabel("F1 score")
+    ax.set_xlabel(t["f1_axis"])
     ax.set_xlim(0, 1.02)
-    ax.set_title("Per-class F1, ordered by field performance", fontsize=12)
-    ax.legend(loc="lower right")
+    # Lab bars run the full width at every row, so an in-axes legend always
+    # covers data.
+    ax.set_title(t["per_class_title"], fontsize=12, pad=26)
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.002), ncol=2)
 
     _save(fig, out_path)
 
 
-def calibration_chart(cross_eval: dict, out_path: Path) -> None:
+def calibration_chart(cross_eval: dict, out_path: Path, t: dict) -> None:
     """Reliability diagram. On the diagonal is well calibrated; below it means
     the model claims more certainty than it earns."""
     panels = [
-        ("PlantVillage (lab)", "plantvillage_test_shared", SERIES_1),
-        ("PlantDoc (field)", "plantdoc_open", SERIES_2),
+        (t["lab_panel"], "plantvillage_test_shared", SERIES_1),
+        (t["field_panel"], "plantdoc_open", SERIES_2),
     ]
 
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.6), sharey=True)
@@ -231,28 +231,28 @@ def calibration_chart(cross_eval: dict, out_path: Path) -> None:
         bins = [b for b in cal["bins"] if b["count"] > 0]
 
         ax.plot([0, 1], [0, 1], color=MUTED, linewidth=1,
-                linestyle="--", label="perfect calibration")
+                linestyle="--", label=t["perfect_calibration"])
         ax.plot([b["confidence"] for b in bins], [b["accuracy"] for b in bins],
-                color=colour, linewidth=2, marker="o", markersize=6, label="observed")
+                color=colour, linewidth=2, marker="o", markersize=6, label=t["observed"])
 
         ax.set_xlim(0, 1.02)
         ax.set_ylim(0, 1.02)
-        ax.set_xlabel("predicted confidence")
+        ax.set_xlabel(t["confidence_axis"])
         ax.set_title(
-            f"{title}\nECE {cal['expected_calibration_error']:.3f}  ·  "
-            f"mean confidence {cal['mean_confidence']:.2f}  ·  "
-            f"accuracy {cal['accuracy']:.2f}",
+            f"{title}\n{t['ece']} {cal['expected_calibration_error']:.3f}  ·  "
+            f"{t['mean_confidence']} {cal['mean_confidence']:.2f}  ·  "
+            f"{t['accuracy']} {cal['accuracy']:.2f}",
             fontsize=9.5,
         )
         ax.legend(loc="upper left", fontsize=8)
 
-    axes[0].set_ylabel("observed accuracy")
-    fig.suptitle("Reliability diagrams — confidence vs correctness", fontsize=12)
+    axes[0].set_ylabel(t["observed_axis"])
+    fig.suptitle(t["calibration_title"], fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     _save(fig, out_path)
 
 
-def model_comparison_chart(runs: dict[str, dict], out_path: Path) -> None:
+def model_comparison_chart(runs: dict[str, dict], out_path: Path, t: dict) -> None:
     """Lab vs field accuracy for each architecture.
 
     Deliberately not a table of in-domain metrics: the finding worth showing is
@@ -269,9 +269,9 @@ def model_comparison_chart(runs: dict[str, dict], out_path: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(8.5, 4.8))
     bars_lab = ax.bar(x - width / 2 - gap, lab, width,
-                      label="PlantVillage (lab)", color=SERIES_1)
+                      label=t["lab_series"], color=SERIES_1)
     bars_field = ax.bar(x + width / 2 + gap, field, width,
-                        label="PlantDoc (field)", color=SERIES_2)
+                        label=t["field_series"], color=SERIES_2)
 
     for bars, values in ((bars_lab, lab), (bars_field, field)):
         for bar, value in zip(bars, values):
@@ -282,12 +282,9 @@ def model_comparison_chart(runs: dict[str, dict], out_path: Path) -> None:
 
     ax.set_xticks(x)
     ax.set_xticklabels(names, fontsize=9)
-    ax.set_ylabel("accuracy")
+    ax.set_ylabel(t["accuracy"])
     ax.set_ylim(0, 1.12)
-    ax.set_title(
-        "Benchmark rank does not predict field rank",
-        fontsize=12, pad=30,
-    )
+    ax.set_title(t["comparison_title"], fontsize=12, pad=30)
     ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2)
 
     _save(fig, out_path)
@@ -305,29 +302,30 @@ def main() -> None:
     ap.add_argument("--run-dir", type=Path, required=True)
     ap.add_argument("--compare-dirs", type=Path, nargs="*", default=[],
                     help="Additional run directories to include in the architecture chart.")
+    ap.add_argument("--lang", default="en", choices=sorted(i18n.STRINGS),
+                    help="Figure language. Output goes to figures/ for en, figures_<lang>/ otherwise.")
     args = ap.parse_args()
 
     apply_style()
-    figures = args.run_dir / "figures"
+    t = i18n.get(args.lang)
+    figures = args.run_dir / ("figures" if args.lang == "en" else f"figures_{args.lang}")
 
     test_payload = json.loads((args.run_dir / "test_metrics.json").read_text(encoding="utf-8"))
-    training_curves(test_payload["history"], figures / "training_curves.png")
+    training_curves(test_payload["history"], figures / "training_curves.png", t)
     confusion_heatmap(
-        test_payload["test"],
-        "PlantVillage held-out test — row-normalised confusion matrix",
-        figures / "confusion_plantvillage.png",
+        test_payload["test"], t["cm_lab_title"],
+        figures / "confusion_plantvillage.png", t,
     )
 
     cross_path = args.run_dir / "cross_eval.json"
     if cross_path.exists():
         cross_eval = json.loads(cross_path.read_text(encoding="utf-8"))
-        domain_gap_chart(cross_eval, figures / "domain_gap.png")
-        per_class_f1_chart(cross_eval, figures / "per_class_f1.png")
-        calibration_chart(cross_eval, figures / "calibration.png")
+        domain_gap_chart(cross_eval, figures / "domain_gap.png", t)
+        per_class_f1_chart(cross_eval, figures / "per_class_f1.png", t)
+        calibration_chart(cross_eval, figures / "calibration.png", t)
         confusion_heatmap(
-            cross_eval["results"]["plantdoc_open"],
-            "PlantDoc (field photographs) — row-normalised confusion matrix",
-            figures / "confusion_plantdoc.png",
+            cross_eval["results"]["plantdoc_open"], t["cm_field_title"],
+            figures / "confusion_plantdoc.png", t,
         )
     else:
         print(f"skipping cross-dataset figures: {cross_path} not found")
@@ -346,7 +344,7 @@ def main() -> None:
                 "cross": json.loads(cross_path.read_text(encoding="utf-8")),
             }
         if len(runs) >= 2:
-            model_comparison_chart(runs, figures / "model_comparison.png")
+            model_comparison_chart(runs, figures / "model_comparison.png", t)
         else:
             print("need at least two complete runs for the comparison chart")
 

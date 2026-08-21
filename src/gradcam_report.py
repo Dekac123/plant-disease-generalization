@@ -25,6 +25,7 @@ from data import (
     eval_transform,
     read_vocabulary,
 )
+import i18n
 from engine import get_device
 from gradcam import GradCAM, background_mass
 from models import build_model, target_layer_for_gradcam
@@ -42,13 +43,14 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--n-stats", type=int, default=384,
                     help="Images per dataset used for the background-mass statistic.")
     ap.add_argument("--batch-size", type=int, default=32)
+    ap.add_argument("--lang", default="en", choices=sorted(i18n.STRINGS))
     return ap.parse_args()
 
 
 def _short(name: str) -> str:
     """Shorten a class name so it fits under a subplot."""
     name = name.replace("___", " / ").replace("_", " ")
-    return name if len(name) <= 28 else name[:27] + "…"
+    return name if len(name) <= 26 else name[:25] + "…"
 
 
 def _subset_loader(dataset, n: int, batch_size: int, seed: int) -> DataLoader:
@@ -78,17 +80,19 @@ def collect(cam: GradCAM, loader: DataLoader, device: torch.device):
     )
 
 
-def plot_grid(images, maps, preds, targets, vocabulary, title, out_path: Path) -> None:
+def plot_grid(images, maps, preds, targets, vocabulary, title, out_path: Path, t: dict) -> None:
     n = len(images)
-    cols = min(8, n)
+    # Four across rather than eight: the per-panel captions carry full class
+    # names, and narrower panels make them collide.
+    cols = min(4, n)
     rows = int(np.ceil(n / cols))
 
     # Each sample takes two stacked cells (image, then overlay); the spacing
     # keeps per-cell titles off the image above them.
     fig, axes = plt.subplots(
         rows * 2, cols,
-        figsize=(2.3 * cols, 5.6 * rows),
-        gridspec_kw={"hspace": 0.45, "wspace": 0.06},
+        figsize=(3.1 * cols, 7.2 * rows),
+        gridspec_kw={"hspace": 0.32, "wspace": 0.06},
     )
     axes = np.atleast_2d(axes)
 
@@ -107,15 +111,15 @@ def plot_grid(images, maps, preds, targets, vocabulary, title, out_path: Path) -
 
         ax_img.imshow(img)
         ax_img.set_title(
-            f"true: {_short(vocabulary[targets[i]])}", fontsize=7,
+            f"{t['gc_true']}: {_short(vocabulary[targets[i]])}", fontsize=8.5,
         )
         ax_img.axis("off")
 
         ax_cam.imshow(img)
         ax_cam.imshow(maps[i], cmap="jet", alpha=0.45)
         ax_cam.set_title(
-            f"pred: {_short(vocabulary[preds[i]])}",
-            fontsize=7,
+            f"{t['gc_pred']}: {_short(vocabulary[preds[i]])}",
+            fontsize=8.5,
             color="green" if correct else "red",
         )
         ax_cam.axis("off")
@@ -148,13 +152,16 @@ def main() -> None:
         ),
     }
 
+    t = i18n.get(args.lang)
     titles = {
-        "plantvillage": "Grad-CAM — PlantVillage held-out test (lab conditions)",
-        "plantdoc": "Grad-CAM — PlantDoc (real field photographs)",
+        "plantvillage": t["gradcam_lab"],
+        "plantdoc": t["gradcam_field"],
     }
 
     stats: dict[str, dict] = {}
-    figures_dir = args.run_dir / "figures"
+    figures_dir = args.run_dir / (
+        "figures" if args.lang == "en" else f"figures_{args.lang}"
+    )
 
     with GradCAM(model, layer) as cam:
         for key, dataset in datasets.items():
@@ -163,7 +170,7 @@ def main() -> None:
             images, maps, preds, targets = collect(cam, loader, device)
             plot_grid(
                 images, maps, preds, targets, vocabulary,
-                titles[key], figures_dir / f"gradcam_{key}.png",
+                titles[key], figures_dir / f"gradcam_{key}.png", t,
             )
 
             # Quantitative background reliance over a larger sample.
@@ -189,7 +196,7 @@ def main() -> None:
     stats["uniform_baseline_border_attention"] = uniform_baseline
     print(f"uniform-attention baseline = {uniform_baseline:.3f}")
 
-    out_path = args.run_dir / "gradcam_stats.json"
+    out_path = args.run_dir / f"gradcam_stats{'' if args.lang == 'en' else '_' + args.lang}.json"
     out_path.write_text(json.dumps(stats, indent=2), encoding="utf-8")
     print(f"wrote {out_path}")
 
