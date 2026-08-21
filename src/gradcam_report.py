@@ -44,6 +44,10 @@ def parse_args() -> argparse.Namespace:
                     help="Images per dataset used for the background-mass statistic.")
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--lang", default="en", choices=sorted(i18n.STRINGS))
+    ap.add_argument("--suffix", default="",
+                    help="Appended to output filenames, for keeping variants side by side.")
+    ap.add_argument("--skip-stats", action="store_true",
+                    help="Only draw the qualitative grid.")
     return ap.parse_args()
 
 
@@ -170,8 +174,11 @@ def main() -> None:
             images, maps, preds, targets = collect(cam, loader, device)
             plot_grid(
                 images, maps, preds, targets, vocabulary,
-                titles[key], figures_dir / f"gradcam_{key}.png", t,
+                titles[key], figures_dir / f"gradcam_{key}{args.suffix}.png", t,
             )
+
+            if args.skip_stats:
+                continue
 
             # Quantitative background reliance over a larger sample.
             stat_loader = _subset_loader(dataset, args.n_stats, args.batch_size, SEED + 1)
@@ -189,6 +196,9 @@ def main() -> None:
                 f"median={stats[key]['median_border_attention']:.3f} "
                 f"(n={stats[key]['n']}, sample acc={stats[key]['accuracy_on_sample']:.3f})"
             )
+
+    if args.skip_stats:
+        return
 
     # A uniform heatmap puts exactly this much mass in the border, so values
     # near it mean attention is spread everywhere.
