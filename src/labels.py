@@ -80,26 +80,3 @@ def assert_mapping_targets_exist(plantvillage_classes: list[str]) -> None:
             f"PLANTDOC_TO_PLANTVILLAGE targets that are not PlantVillage classes:\n"
             f"  {bad}\nKnown classes:\n  {sorted(known)}"
         )
-
-
-def build_crosseval_mapping(
-    plantvillage_classes: list[str],
-    plantdoc_classes: list[str],
-) -> tuple[dict[int, int], list[str]]:
-    """Map PlantDoc label indices onto PlantVillage label indices.
-
-    Returns the mapping plus any PlantDoc class names that could not be
-    resolved; a non-empty second element should be treated as fatal.
-    """
-    pv_index = {name: i for i, name in enumerate(plantvillage_classes)}
-
-    mapping: dict[int, int] = {}
-    unmapped: list[str] = []
-    for pd_idx, pd_name in enumerate(plantdoc_classes):
-        pv_name = PLANTDOC_TO_PLANTVILLAGE.get(pd_name)
-        if pv_name is None or pv_name not in pv_index:
-            unmapped.append(pd_name)
-            continue
-        mapping[pd_idx] = pv_index[pv_name]
-
-    return mapping, unmapped
