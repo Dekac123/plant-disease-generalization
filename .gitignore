@@ -1,0 +1,17 @@
+# Virtual environment
+.venv/
+
+# Datasets are downloaded from the Hub by prepare_data.py; never commit them.
+data/
+
+# Model weights and cached predictions are large binaries. The JSON metrics and
+# PNG figures in results/ ARE committed, since those are the reported findings.
+*.pt
+*.npz
+
+# Scratch runs (smoke tests, figure experiments).
+results/_*
+
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/

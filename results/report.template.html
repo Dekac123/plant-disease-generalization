@@ -1,0 +1,851 @@
+<title>The 99% That Wasn't</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* ---- tokens: complete light palette on bare :root ---------------- */
+  :root {
+    color-scheme: light;
+
+    --ground:        #f6f7f4;
+    --surface:       #fcfdfb;
+    --surface-sunk:  #eef1ea;
+
+    --ink:           #151813;
+    --ink-2:         #565d53;
+    --ink-muted:     #848a80;
+
+    --rule:          #dde1d8;
+    --rule-strong:   #c5cbbf;
+
+    /* The two accents are not decoration: they are the two domains, used
+       identically in prose, tables and every figure. */
+    --lab:           #2a78d6;
+    --lab-wash:      #e7f0fc;
+    --field:         #d1541f;
+    --field-wash:    #fceee7;
+
+    --shadow:        0 1px 2px rgba(21, 24, 19, .05), 0 8px 24px rgba(21, 24, 19, .05);
+
+    --measure: 68ch;
+    --step--1: clamp(.82rem, .8rem + .1vw, .89rem);
+    --step-0:  clamp(1rem, .96rem + .2vw, 1.09rem);
+    --step-1:  clamp(1.2rem, 1.1rem + .4vw, 1.4rem);
+    --step-2:  clamp(1.5rem, 1.3rem + .8vw, 2rem);
+    --step-4:  clamp(2.6rem, 1.9rem + 3.2vw, 4.6rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground:       #12140f;
+      --surface:      #191c16;
+      --surface-sunk: #22261e;
+      --ink:          #f2f4ee;
+      --ink-2:        #b3baac;
+      --ink-muted:    #878d82;
+      --rule:         #2c3128;
+      --rule-strong:  #3d4438;
+      --lab:          #5b9bec;
+      --lab-wash:     #16273c;
+      --field:        #e87a4a;
+      --field-wash:   #3a2318;
+      --shadow:       0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .28);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground:       #12140f;
+    --surface:      #191c16;
+    --surface-sunk: #22261e;
+    --ink:          #f2f4ee;
+    --ink-2:        #b3baac;
+    --ink-muted:    #878d82;
+    --rule:         #2c3128;
+    --rule-strong:  #3d4438;
+    --lab:          #5b9bec;
+    --lab-wash:     #16273c;
+    --field:        #e87a4a;
+    --field-wash:   #3a2318;
+    --shadow:       0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .28);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: var(--step-0);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 3rem); }
+  .measure { max-width: var(--measure); }
+
+  /* ---- masthead ---------------------------------------------------- */
+  .masthead { padding: clamp(3.5rem, 9vw, 7rem) 0 clamp(2rem, 4vw, 3rem); }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: var(--step--1);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin: 0 0 1.6rem;
+  }
+
+  h1 {
+    font-family: Newsreader, Georgia, "Times New Roman", serif;
+    font-weight: 500;
+    font-size: var(--step-4);
+    line-height: 1.02;
+    letter-spacing: -.022em;
+    text-wrap: balance;
+    margin: 0 0 1.4rem;
+    max-width: 20ch;
+  }
+
+  .standfirst {
+    font-family: Newsreader, Georgia, serif;
+    font-size: var(--step-1);
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 58ch;
+    margin: 0;
+  }
+
+  /* ---- the verdict strip ------------------------------------------- */
+  .verdict {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: stretch;
+    gap: 0;
+    margin: clamp(2.5rem, 6vw, 4rem) 0;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .verdict-half { padding: clamp(1.5rem, 3.5vw, 2.4rem); }
+  .verdict-half.lab   { background: var(--lab-wash); }
+  .verdict-half.field { background: var(--field-wash); }
+
+  .verdict-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: var(--step--1);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin: 0 0 .7rem;
+  }
+  .lab   .verdict-label { color: var(--lab); }
+  .field .verdict-label { color: var(--field); }
+
+  .verdict-number {
+    font-family: Newsreader, Georgia, serif;
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -.03em;
+    font-variant-numeric: tabular-nums;
+    margin: 0 0 .5rem;
+  }
+  .lab   .verdict-number { color: var(--lab); }
+  .field .verdict-number { color: var(--field); }
+
+  .verdict-note { margin: 0; font-size: var(--step--1); color: var(--ink-2); line-height: 1.5; }
+
+  .verdict-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 clamp(.6rem, 2vw, 1.4rem);
+    background: var(--surface);
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+    letter-spacing: .08em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 720px) {
+    .verdict { grid-template-columns: 1fr; }
+    .verdict-arrow {
+      border-left: 0; border-right: 0;
+      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+      padding: .7rem;
+    }
+  }
+
+  /* ---- sections ---------------------------------------------------- */
+  section { padding: clamp(2.2rem, 5vw, 3.6rem) 0; border-top: 1px solid var(--rule); }
+  section:first-of-type { border-top: 0; }
+
+  h2 {
+    font-family: Newsreader, Georgia, serif;
+    font-size: var(--step-2);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -.015em;
+    text-wrap: balance;
+    margin: 0 0 1.5rem;
+    display: flex;
+    gap: .85rem;
+    align-items: baseline;
+  }
+
+  /* Numbering is structural here: the report is a sequence -- question,
+     method, result, interpretation -- and the reader relies on the order. */
+  .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+    font-weight: 500;
+    letter-spacing: .06em;
+    flex: none;
+  }
+
+  h3 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: var(--step-0);
+    font-weight: 600;
+    letter-spacing: -.005em;
+    margin: 2.2rem 0 .7rem;
+  }
+
+  p { margin: 0 0 1.15rem; }
+  a { color: var(--lab); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--lab); outline-offset: 3px; border-radius: 2px;
+  }
+
+  strong { font-weight: 600; }
+
+  .lede { font-size: var(--step-1); font-family: Newsreader, Georgia, serif; color: var(--ink-2); line-height: 1.5; }
+
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .88em; }
+  code {
+    background: var(--surface-sunk);
+    padding: .12em .38em;
+    border-radius: 2px;
+  }
+
+  .tag-lab, .tag-field { font-weight: 600; }
+  .tag-lab { color: var(--lab); }
+  .tag-field { color: var(--field); }
+
+  /* ---- callout ------------------------------------------------------ */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--rule-strong);
+    border-radius: 2px;
+    padding: 1.15rem 1.35rem;
+    margin: 1.8rem 0;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    line-height: 1.6;
+    max-width: var(--measure);
+  }
+  .callout.finding { border-left-color: var(--field); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout-title {
+    font-family: "IBM Plex Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-size: .78rem;
+    color: var(--ink-muted);
+    margin: 0 0 .55rem;
+  }
+
+  /* ---- tables ------------------------------------------------------- */
+  .table-scroll { overflow-x: auto; margin: 1.6rem 0; }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
+  }
+  caption {
+    text-align: left;
+    color: var(--ink-muted);
+    font-size: .8rem;
+    font-family: "IBM Plex Mono", monospace;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding-bottom: .7rem;
+  }
+  th, td { padding: .58rem .8rem; text-align: left; border-bottom: 1px solid var(--rule); }
+  thead th {
+    font-weight: 600;
+    color: var(--ink-2);
+    border-bottom: 1px solid var(--rule-strong);
+    white-space: nowrap;
+  }
+  td.num-cell, th.num-cell { text-align: right; font-family: "IBM Plex Mono", monospace; }
+  tbody tr:last-child td { border-bottom: 0; }
+  .col-lab   { color: var(--lab); font-weight: 500; }
+  .col-field { color: var(--field); font-weight: 500; }
+  .retained { color: var(--ink-muted); }
+
+  /* ---- figures ------------------------------------------------------ */
+  figure {
+    margin: 2.2rem 0;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 1rem;
+    box-shadow: var(--shadow);
+  }
+  figure img { width: 100%; height: auto; display: block; border-radius: 2px; }
+  figcaption {
+    margin-top: .9rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+    line-height: 1.55;
+    max-width: 76ch;
+  }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  details {
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: .85rem 1.1rem;
+    margin: 1.4rem 0;
+    background: var(--surface);
+    max-width: var(--measure);
+  }
+  summary { cursor: pointer; font-weight: 500; font-size: var(--step--1); }
+  details[open] summary { margin-bottom: .8rem; }
+  details p:last-child, details ul:last-child { margin-bottom: 0; }
+
+  ul { margin: 0 0 1.15rem; padding-left: 1.15rem; }
+  li { margin-bottom: .45rem; }
+
+  pre {
+    background: var(--surface-sunk);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: .9rem 1.1rem;
+    overflow-x: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .82rem;
+    line-height: 1.6;
+    margin: 1.1rem 0;
+  }
+  pre code { background: none; padding: 0; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 2.5rem 0 4rem;
+    color: var(--ink-muted);
+    font-size: var(--step--1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Cross-dataset evaluation · PlantVillage → PlantDoc</p>
+    <h1>The 99% that wasn't</h1>
+    <p class="standfirst">
+      A leaf-disease classifier scores {{VAL:test.accuracy:pct}} on the
+      benchmark everyone uses. Photograph an actual diseased plant in an actual
+      field and it is right one time in seven.
+    </p>
+  </header>
+
+  <div class="verdict">
+    <div class="verdict-half lab">
+      <p class="verdict-label">Lab photographs</p>
+      <p class="verdict-number">{{VAL:test.accuracy:pct}}</p>
+      <p class="verdict-note">
+        PlantVillage held-out test set — {{VAL:test.n_samples:int}} images the
+        model never saw during training, drawn from the same studio conditions
+        it was trained on.
+      </p>
+    </div>
+    <div class="verdict-arrow">same model<br>same code<br>same 28 classes</div>
+    <div class="verdict-half field">
+      <p class="verdict-label">Field photographs</p>
+      <p class="verdict-number">{{VAL:field.accuracy:pct}}</p>
+      <p class="verdict-note">
+        PlantDoc — {{VAL:field.n_samples:int}} photographs of the same diseases
+        taken in real fields. Chance on 28 classes is 3.6%.
+      </p>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="num">01</span><span>The question this asks</span></h2>
+    <div class="measure">
+      <p class="lede">
+        Almost every plant-disease project trains on PlantVillage, reports an
+        accuracy in the high nineties, and stops there. That number is real. It
+        is also close to meaningless.
+      </p>
+      <p>
+        Every PlantVillage image is a studio photograph: one detached leaf,
+        centred in frame, on a uniform grey background, under even lighting.
+        Train and test splits both come from that distribution — so a high test
+        score confirms the model learned <em>that distribution</em>, and says
+        nothing about whether it learned plant pathology.
+      </p>
+      <p>
+        The way to find out is to change the photographs but not the question.
+        This project trains on PlantVillage and then evaluates the same model,
+        with no fine-tuning and no adaptation, on
+        <a href="https://huggingface.co/datasets/Project-AgML/plant_doc_classification">PlantDoc</a>:
+        the same diseases on the same crops, photographed in real fields with
+        cluttered backgrounds, overlapping leaves, variable light and awkward
+        angles. All 28 PlantDoc classes map onto PlantVillage classes, so the
+        model is being asked exactly the question it was trained to answer.
+      </p>
+
+      <div class="callout">
+        <p class="callout-title">Controlling the comparison</p>
+        <p>
+          PlantDoc covers 28 of the 39 training classes. Comparing 39-class lab
+          accuracy against 28-class field accuracy would confound "harder
+          images" with "different label set", so every lab figure quoted
+          alongside a field figure is <strong>restricted to the same 28
+          classes</strong>. A third evaluation masks the model's output to those
+          28 classes, separating "predicted something that cannot occur here"
+          from "genuinely confused between two plausible diseases".
+        </p>
+      </div>
+
+      <div class="callout">
+        <p class="callout-title">And a control, because the alternative explanation is a bug</p>
+        <p>
+          "The model does not generalize" and "the label mapping is broken"
+          produce identical numbers, and this project hit exactly that bug once
+          during development. So the same model, through the same evaluation
+          code, was also run against an
+          <strong>independently packaged PlantVillage derivative</strong> —
+          different uploader, different class naming,
+          {{VAL:control.n_samples:int}} images. It scores
+          <span class="tag-lab">{{VAL:control.accuracy:pct}}</span>. The mapping
+          and evaluation code work; what follows is domain shift, not a defect.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span><span>How the model was built</span></h2>
+    <div class="measure">
+      <p>
+        The classifier is an ImageNet-pretrained ResNet18 fine-tuned for 12
+        epochs on 38,812 PlantVillage images, with a stratified 70/15/15
+        train/validation/test split. Training used mixed precision, OneCycle
+        learning-rate scheduling, AdamW, gradient clipping and label smoothing.
+        Augmentation was deliberately aggressive — random resized crops, flips,
+        rotation, colour jitter and random erasing — precisely because the
+        source images are so uniform that a network will otherwise memorise
+        their incidental regularities. The model has
+        {{VAL:meta.parameters:int}} trainable parameters.
+      </p>
+      <p>
+        Checkpoints were selected on validation <strong>macro</strong> F1 rather
+        than accuracy. PlantVillage is heavily imbalanced — about 5,000 images in
+        the largest class against 150 in the smallest — and plain accuracy
+        would keep choosing checkpoints that are strong on common classes and
+        indifferent to rare ones. The reported checkpoint is epoch
+        {{VAL:meta.best_epoch:raw}}. Total training time was
+        {{VAL:meta.train_minutes:f1}} minutes on an RTX 4060.
+      </p>
+    </div>
+
+    <figure>
+      <img src="{{FIG:training_curves}}" alt="Two line charts. Left: training and validation cross-entropy loss falling across 12 epochs. Right: validation accuracy and macro F1 rising to approximately 0.997 and 0.994.">
+      <figcaption>
+        <b>Training converges quickly and cleanly.</b> Validation accuracy passes
+        99% by epoch 7. Nothing in this chart hints at the failure documented
+        below — which is the point: in-domain training curves cannot reveal an
+        out-of-domain problem. (Training loss sits above validation loss because
+        it is measured on heavily augmented images and includes label smoothing,
+        while validation is clean and unsmoothed; the gap is not overfitting.)
+      </figcaption>
+    </figure>
+
+    <details>
+      <summary>What changed relative to the original notebook</summary>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>Aspect</th><th>Original</th><th>This version</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Evaluation split</td><td>validation only</td><td>stratified 70/15/15 with a held-out test set</td></tr>
+            <tr><td>Metrics</td><td>accuracy</td><td>accuracy, balanced accuracy, per-class and macro precision / recall / F1, Cohen's κ, top-5, calibration</td></tr>
+            <tr><td>Augmentation</td><td>none</td><td>crop, flips, rotation, colour jitter, random erasing</td></tr>
+            <tr><td>Normalisation</td><td>none</td><td>ImageNet channel statistics</td></tr>
+            <tr><td>Precision</td><td>fp32</td><td>mixed precision (AMP)</td></tr>
+            <tr><td>Batch size</td><td>8</td><td>64</td></tr>
+            <tr><td>Model selection</td><td>final epoch</td><td>best validation macro F1, early stopping</td></tr>
+            <tr><td>Generalization</td><td>untested</td><td>cross-dataset evaluation on field photographs</td></tr>
+            <tr><td>Explainability</td><td>none</td><td>Grad-CAM saliency + background-attention measure</td></tr>
+            <tr><td>Epoch time</td><td>~90 min</td><td>~66 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span><span>In the lab, it is nearly perfect</span></h2>
+    <div class="measure">
+      <p>
+        On the held-out PlantVillage test set the model reaches
+        <span class="tag-lab">{{VAL:test.accuracy:pct}} accuracy</span>,
+        {{VAL:test.macro_f1:f4}} macro F1 and a Cohen's κ of
+        {{VAL:test.cohen_kappa:f4}}. Top-5 accuracy is
+        {{VAL:test.top5_accuracy:pct}} — across {{VAL:test.n_samples:int}}
+        images there is not one where the correct class falls outside the
+        model's top five guesses.
+      </p>
+      <p>
+        Even the weakest classes are strong. The lowest per-class F1 is 0.950,
+        on <em>Corn — Cercospora leaf spot</em>, which the model occasionally
+        confuses with <em>Corn — Northern leaf blight</em>. That confusion is
+        botanically reasonable: the two produce similar elongated grey-brown
+        lesions on the same crop, and they are genuinely hard for people too.
+      </p>
+      <p>
+        By every standard this project would normally apply, the work is done.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span><span>In the field, it collapses</span></h2>
+    <div class="measure">
+      <p class="lede">
+        The same weights, the same 28 classes, photographs taken outdoors:
+        accuracy falls from {{VAL:lab.accuracy:pct}} to
+        <span class="tag-field">{{VAL:field.accuracy:pct}}</span>. That is a
+        {{VAL:gap.relative_drop:pct1}} relative drop, and it leaves the model
+        only about four times better than guessing.
+      </p>
+    </div>
+
+    <figure>
+      <img src="{{FIG:domain_gap}}" alt="Grouped bar chart comparing six metrics between lab and field photographs. Lab bars are near 1.0 across all six; field bars reach 0.15 accuracy, 0.14 balanced accuracy, 0.16 macro F1, 0.44 top-5 accuracy, 0.29 crop identification and 0.74 healthy versus diseased.">
+      <figcaption>
+        <b>Every measure falls, but they do not fall equally.</b> The gentler
+        decline in "healthy vs diseased" is not resilience — see below.
+      </figcaption>
+    </figure>
+
+    <div class="table-scroll measure" style="max-width:none">
+      <table>
+        <caption>The same model on both distributions, restricted to the 28 shared classes</caption>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th class="num-cell">Lab</th>
+            <th class="num-cell">Field</th>
+            <th class="num-cell">Retained</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Accuracy</td><td class="num-cell col-lab">{{VAL:lab.accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.accuracy:f4}}</td><td class="num-cell retained">{{VAL:gap.retained_fraction:pct1}}</td></tr>
+          <tr><td>Balanced accuracy</td><td class="num-cell col-lab">{{VAL:lab.balanced_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.balanced_accuracy:f4}}</td><td class="num-cell retained">14.3%</td></tr>
+          <tr><td>Macro F1</td><td class="num-cell col-lab">{{VAL:lab.macro_f1:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_f1:f4}}</td><td class="num-cell retained">16.1%</td></tr>
+          <tr><td>Macro precision</td><td class="num-cell col-lab">{{VAL:lab.macro_precision:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_precision:f4}}</td><td class="num-cell retained">35.7%</td></tr>
+          <tr><td>Macro recall</td><td class="num-cell col-lab">{{VAL:lab.macro_recall:f4}}</td><td class="num-cell col-field">{{VAL:field.macro_recall:f4}}</td><td class="num-cell retained">14.3%</td></tr>
+          <tr><td>Top-5 accuracy</td><td class="num-cell col-lab">{{VAL:lab.top5_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.top5_accuracy:f4}}</td><td class="num-cell retained">43.5%</td></tr>
+          <tr><td>Cohen's κ</td><td class="num-cell col-lab">{{VAL:lab.cohen_kappa:f4}}</td><td class="num-cell col-field">{{VAL:field.cohen_kappa:f4}}</td><td class="num-cell retained">13.1%</td></tr>
+          <tr><td>Crop identification</td><td class="num-cell col-lab">{{VAL:lab.crop_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.crop_accuracy:f4}}</td><td class="num-cell retained">28.8%</td></tr>
+          <tr><td>Healthy vs diseased</td><td class="num-cell col-lab">{{VAL:lab.healthy_vs_diseased_accuracy:f4}}</td><td class="num-cell col-field">{{VAL:field.healthy_vs_diseased_accuracy:f4}}</td><td class="num-cell retained">74.2%</td></tr>
+          <tr>
+            <td>Control — foreign PlantVillage packaging</td>
+            <td class="num-cell col-lab" colspan="2" style="text-align:center">{{VAL:control.accuracy:f4}} accuracy · {{VAL:control.macro_f1:f4}} macro F1</td>
+            <td class="num-cell retained">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="measure">
+      <h3>It is not "right plant, wrong disease"</h3>
+      <p>
+        The most forgiving question you can ask is which <em>crop</em> is in the
+        photograph — tomato or corn or apple, ignoring the disease entirely.
+        That is a 14-way problem with obvious visual cues: leaf shape, size,
+        venation. In the lab the model answers it {{VAL:lab.crop_accuracy:pct}}
+        of the time. In the field,
+        <span class="tag-field">{{VAL:field.crop_accuracy:pct}}</span>.
+      </p>
+      <p>
+        So the failure is not a subtle mix-up between similar pathologies. The
+        model frequently cannot tell what plant it is looking at.
+      </p>
+
+      <div class="callout finding">
+        <p class="callout-title">The single most telling number</p>
+        <p>
+          <strong>34.9% of field photographs are classified as
+          "Background_without_leaves"</strong> — the PlantVillage class meaning
+          <em>there is no leaf in this image</em>. Shown a photograph of a
+          diseased plant growing in a field, the model's most common response is
+          to deny that it contains a leaf at all. It has learned "leaf" to mean
+          "a specimen isolated on a grey studio background", and a leaf attached
+          to a living plant does not qualify.
+        </p>
+      </div>
+
+      <h3>The one metric that looks survivable isn't</h3>
+      <p>
+        Collapsing all 28 classes into a single binary — is this plant sick or
+        healthy? — gives 74.15% in the field, which sounds usable. It isn't.
+        67.07% of PlantDoc images are diseased, so answering "diseased" to every
+        single photograph scores 67.07%. The model predicts "diseased" 85.29% of
+        the time, achieving {{VAL:field.diseased_recall:pct}} recall at
+        {{VAL:field.diseased_precision:pct}} precision.
+      </p>
+      <p>
+        Seven points above a constant answer is not a working triage tool. It is
+        a model with a heavy bias toward "diseased" that happens to be pointed at
+        a mostly-diseased dataset.
+      </p>
+    </div>
+
+    <figure>
+      <img src="{{FIG:per_class_f1}}" alt="Horizontal bar chart of per-class F1 for 28 classes, lab versus field, sorted by field performance. Lab bars are near 1.0 throughout; field bars are near zero for most classes with a handful reaching 0.3 to 0.5.">
+      <figcaption>
+        <b>The collapse is broad, not concentrated.</b> Lab F1 sits near 1.0 for
+        every class. In the field a handful of classes retain partial signal —
+        typically those with large, high-contrast lesions — while most fall to
+        near zero.
+      </figcaption>
+    </figure>
+
+    <details>
+      <summary>Does restricting the output to the 28 possible classes help?</summary>
+      <p>
+        Somewhat, and revealingly. Masking the model's output so it can only
+        choose among the 28 classes that actually occur in PlantDoc lifts
+        accuracy from {{VAL:field.accuracy:pct}} to
+        <strong>{{VAL:restricted.accuracy:pct}}</strong>. About six points of the
+        error came from confidently predicting classes that could not possibly
+        be correct — most of them <code>Background_without_leaves</code>.
+      </p>
+      <p>
+        The remaining 79% error is genuine confusion among plausible options, so
+        constraining the label space is not a fix.
+      </p>
+    </details>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span><span>It does not know that it is wrong</span></h2>
+    <div class="measure">
+      <p>
+        A model that fails is manageable if it fails loudly. The dangerous
+        failure is the confident one — and that is what happens here.
+      </p>
+      <p>
+        On lab images the model is well calibrated: expected calibration error
+        is {{VAL:lab_cal.expected_calibration_error:f4}}, and of the
+        {{VAL:lab_cal.fraction_above_90_confidence:pct1}} of predictions made
+        with over 90% confidence,
+        <span class="tag-lab">{{VAL:lab_cal.accuracy_above_90_confidence:pct1}}
+        are correct</span>. Confidence means what it says.
+      </p>
+      <p>
+        On field images calibration error rises more than tenfold to
+        {{VAL:field_cal.expected_calibration_error:f4}}. The model still makes
+        high-confidence claims on
+        {{VAL:field_cal.fraction_above_90_confidence:pct1}} of photographs — and
+        of those, only
+        <span class="tag-field">{{VAL:field_cal.accuracy_above_90_confidence:pct1}}
+        are correct</span>. It remains
+        {{VAL:field_cal.mean_confidence_when_wrong:pct1}} confident, on average,
+        on the images it gets wrong.
+      </p>
+    </div>
+
+    <figure>
+      <img src="{{FIG:calibration}}" alt="Two reliability diagrams. The lab panel tracks the perfect-calibration diagonal closely. The field panel sits far below the diagonal: at 97% predicted confidence, observed accuracy is roughly 27%.">
+      <figcaption>
+        <b>Reliability diagrams — confidence against correctness.</b> Points on
+        the dashed diagonal are perfectly calibrated. The lab panel hugs it. The
+        field panel sits far below: at the highest confidence bin the model is
+        right about a quarter of the time. A deployed app would show these
+        diagnoses without any indication of doubt.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span><span>What the model is actually looking at</span></h2>
+    <div class="measure">
+      <p>
+        Accuracy cannot distinguish a model that reads lesions from one that
+        reads backdrops — both score well in the lab. Grad-CAM answers the
+        question directly by showing which pixels the predicted class score
+        depends on.
+      </p>
+    </div>
+
+    <figure>
+      <img src="{{FIG:gradcam_plantvillage}}" alt="A grid of eight PlantVillage leaf photographs with Grad-CAM heatmap overlays beneath each. Attention forms broad blobs covering whole leaf silhouettes rather than concentrating on lesions.">
+      <figcaption>
+        <b>Lab images: attention covers the leaf silhouette, not the disease.</b>
+        The heatmaps form broad blobs over the whole specimen rather than
+        concentrating on lesions — consistent with a model keyed to overall
+        shape and colour against a predictable background. Note the second
+        panel: PlantVillage's <code>Background_without_leaves</code> class
+        contains stock photographs, in this case of sheep.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="{{FIG:gradcam_plantdoc}}" alt="A grid of eight PlantDoc field photographs with Grad-CAM overlays. Most predictions are marked incorrect in red. Attention lands on soil, fingers and background foliage.">
+      <figcaption>
+        <b>Field images: attention scatters onto whatever is present.</b> Six of
+        these eight are wrong. A potato plant growing in soil is called
+        "Background without leaves", with attention on the ground between the
+        stems. An apple leaf on a white stock-photo background — complete with
+        watermark — becomes "Pepper, bell / healthy". Where the model does
+        succeed, as on the corn blight in the sixth column, attention sits
+        squarely on the lesion stripe.
+      </figcaption>
+    </figure>
+
+    <div class="measure">
+      <p>
+        The quantitative version of the same observation: measuring what
+        fraction of Grad-CAM attention mass falls in the outer border of the
+        frame, lab images score 0.649 against 0.667 for field images, where 0.750
+        would mean attention spread perfectly evenly. Field attention is
+        measurably more diffuse — the model has no centred specimen to lock
+        onto, so its evidence smears across the frame.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span><span>What this means</span></h2>
+    <div class="measure">
+      <p class="lede">
+        The benchmark score was never measuring disease recognition. It was
+        measuring how well the model had learned a photographic convention.
+      </p>
+      <p>
+        This matters beyond one dataset, because the PlantVillage number is the
+        number that gets cited. A 99% accuracy claim implies a tool a farmer
+        could point at a plant. The evidence here says that tool would be wrong
+        six times in seven, would frequently deny that it was looking at a plant
+        at all, and would report no uncertainty while doing it.
+      </p>
+
+      <h3>An observation on training longer</h3>
+      <p>
+        The epoch-1 checkpoint scored 93.08% in the lab and 15.22% in the field.
+        The final epoch-{{VAL:meta.best_epoch:raw}} checkpoint scores
+        {{VAL:lab.accuracy:pct}} in the lab and {{VAL:field.accuracy:pct}} in the
+        field. Eleven further epochs bought 6.5 points of benchmark accuracy and
+        cost 0.4 points of field accuracy.
+      </p>
+      <p>
+        This is a single comparison and the field difference is small enough to
+        be noise. But the direction is worth stating plainly: the additional
+        training produced no transferable improvement whatsoever. It fit the
+        studio distribution harder.
+      </p>
+
+      <h3>What would actually help</h3>
+      <ul>
+        <li><strong>Train on field data.</strong> The gap is a data problem before it is a modelling problem. PlantDoc is small (2,569 images), but even a modest amount of in-the-wild data during training changes what the model can key on.</li>
+        <li><strong>Report cross-dataset numbers as standard.</strong> An in-domain test split cannot detect this failure. Nothing in §2 or §3 hinted at §4.</li>
+        <li><strong>Segment the leaf before classifying.</strong> Removing the background removes the shortcut, at the cost of needing segmentation labels.</li>
+        <li><strong>Calibrate, and refuse to answer.</strong> An abstention threshold would convert most confident errors into "unsure" — far more useful in the field than a confident wrong diagnosis.</li>
+      </ul>
+
+      <div class="callout">
+        <p class="callout-title">Limitations</p>
+        <p>
+          PlantDoc is not a clean instrument. Its labels are noisier than
+          PlantVillage's, some images are stock photographs rather than field
+          captures, and its class definitions were mapped onto PlantVillage's by
+          hand. Part of the measured gap is dataset quality rather than domain
+          shift. But label noise cannot explain a model calling a third of the
+          images leafless, nor crop identification falling to 28.8% — those
+          require the model to be reading something other than the plant.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">08</span><span>Reproducing this</span></h2>
+    <div class="measure">
+      <p>
+        Both datasets are plain parquet files. Some Hugging Face datasets —
+        including the most-downloaded PlantVillage mirror — ship a
+        <code>.py</code> loading script that executes on your machine if you
+        pass <code>trust_remote_code=True</code>. Nothing here does that; the
+        parquet-only sources were chosen deliberately.
+      </p>
+      <pre><code>python src/prepare_data.py --data-root data
+python src/train.py --model resnet18 --epochs 12 --run-name resnet18_pretrained
+python src/cross_eval.py --model resnet18 --run-dir results/resnet18_pretrained
+python src/gradcam_report.py --model resnet18 --run-dir results/resnet18_pretrained
+python src/figures.py --run-dir results/resnet18_pretrained</code></pre>
+      <p>
+        Every figure quoted above is substituted into this page from that JSON
+        at build time rather than typed in by hand, so the prose cannot drift
+        away from the run that produced it.
+      </p>
+    </div>
+
+    <figure>
+      <img src="{{FIG:confusion_plantvillage}}" alt="A 39 by 39 row-normalised confusion matrix for the lab test set, showing a strong unbroken diagonal.">
+      <figcaption>
+        <b>Lab confusion matrix, row-normalised.</b> An almost unbroken diagonal
+        across all 39 classes.
+      </figcaption>
+    </figure>
+
+    <figure>
+      <img src="{{FIG:confusion_plantdoc}}" alt="A 28 by 28 row-normalised confusion matrix for field photographs, showing a faint diagonal and heavy scattered off-diagonal mass.">
+      <figcaption>
+        <b>Field confusion matrix, row-normalised.</b> The diagonal is barely
+        visible. Prediction mass concentrates in vertical bands — a few classes
+        absorbing images from everywhere, which is what a model does when its
+        features stop discriminating.
+      </figcaption>
+    </figure>
+  </section>
+
+  <footer>
+    <p>
+      Data: <span class="mono">Project-AgML/plant_village_classification</span>
+      (55,448 images, 39 classes; Hughes &amp; Salathé 2015) and
+      <span class="mono">Project-AgML/plant_doc_classification</span>
+      (2,569 images, 28 classes, CC-BY-SA-4.0; Singh et al. 2020).
+      Model: ImageNet-pretrained ResNet18,
+      {{VAL:meta.parameters:int}} trainable parameters, trained
+      {{VAL:meta.train_minutes:f1}} minutes on an RTX 4060.
+      Grad-CAM after Selvaraju et al. 2017.
+    </p>
+  </footer>
+
+</div>
