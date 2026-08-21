@@ -654,7 +654,57 @@
   </section>
 
   <section>
-    <h2><span class="num">05</span><span>It does not know that it is wrong</span></h2>
+    <h2><span class="num">05</span><span>Benchmark rank does not predict field rank</span></h2>
+    <div class="measure">
+      <p>
+        Everything above concerns one model. The obvious follow-up is whether a
+        different architecture escapes the problem — so the original project's
+        from-scratch CNN was trained under identical conditions: same split,
+        same augmentation, same schedule, same twelve epochs, same
+        macro-F1 checkpoint selection. The only differences are the architecture
+        and the absence of ImageNet initialisation.
+      </p>
+      <p>
+        On the benchmark the from-scratch model
+        <em>wins</em>: {{VAL:alt.test.accuracy:pct}} against
+        {{VAL:test.accuracy:pct}}, with fewer parameters
+        ({{VAL:alt.parameters:int}} against {{VAL:meta.parameters:int}}). On the
+        shared 28 classes the two are indistinguishable —
+        {{VAL:alt.lab.accuracy:f4}} against {{VAL:lab.accuracy:f4}}.
+      </p>
+      <p>
+        In the field they are not close at all. The pretrained model manages
+        <span class="tag-lab">{{VAL:field.accuracy:pct}}</span>; the scratch
+        model <span class="tag-field">{{VAL:alt.field.accuracy:pct}}</span> — a
+        {{VAL:alt.gap.relative_drop:pct1}} collapse against
+        {{VAL:gap.relative_drop:pct1}}.
+      </p>
+    </div>
+
+    <figure>
+      <img src="{{FIG:model_comparison}}" alt="Grouped bar chart comparing two architectures. Both show lab accuracy of 0.996. Field accuracy is 0.148 for the pretrained ResNet18 and 0.098 for the from-scratch ResNet9.">
+      <figcaption>
+        <b>Identical on the benchmark, 50% apart in the field.</b> Selecting a
+        model the way this field normally does — by held-out benchmark accuracy
+        — picks the scratch network, which is a third less accurate on real
+        photographs.
+      </figcaption>
+    </figure>
+
+    <div class="measure">
+      <p>
+        This is the practical sting in the whole experiment. It is not merely
+        that the benchmark number is inflated; the benchmark actively
+        <em>misranks</em>. Whatever ImageNet pretraining contributes does not
+        show up in the lab score at all, and only becomes visible once the
+        photographs change. A leaderboard built on PlantVillage would order
+        these two models backwards.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span><span>It does not know that it is wrong</span></h2>
     <div class="measure">
       <p>
         A model that fails is manageable if it fails loudly. The dangerous
@@ -694,7 +744,7 @@
   </section>
 
   <section>
-    <h2><span class="num">06</span><span>What the model is actually looking at</span></h2>
+    <h2><span class="num">07</span><span>What the model is actually looking at</span></h2>
     <div class="measure">
       <p>
         Accuracy cannot distinguish a model that reads lesions from one that
@@ -742,7 +792,7 @@
   </section>
 
   <section>
-    <h2><span class="num">07</span><span>What this means</span></h2>
+    <h2><span class="num">08</span><span>What this means</span></h2>
     <div class="measure">
       <p class="lede">
         The benchmark score was never measuring disease recognition. It was
@@ -774,7 +824,7 @@
       <h3>What would actually help</h3>
       <ul>
         <li><strong>Train on field data.</strong> The gap is a data problem before it is a modelling problem. PlantDoc is small (2,569 images), but even a modest amount of in-the-wild data during training changes what the model can key on.</li>
-        <li><strong>Report cross-dataset numbers as standard.</strong> An in-domain test split cannot detect this failure. Nothing in §2 or §3 hinted at §4.</li>
+        <li><strong>Report cross-dataset numbers as standard.</strong> An in-domain test split cannot detect this failure, and as §5 shows it cannot even rank two models correctly. Nothing in §2 or §3 hinted at §4.</li>
         <li><strong>Segment the leaf before classifying.</strong> Removing the background removes the shortcut, at the cost of needing segmentation labels.</li>
         <li><strong>Calibrate, and refuse to answer.</strong> An abstention threshold would convert most confident errors into "unsure" — far more useful in the field than a confident wrong diagnosis.</li>
       </ul>
@@ -795,7 +845,7 @@
   </section>
 
   <section>
-    <h2><span class="num">08</span><span>Reproducing this</span></h2>
+    <h2><span class="num">09</span><span>Reproducing this</span></h2>
     <div class="measure">
       <p>
         Both datasets are plain parquet files. Some Hugging Face datasets —

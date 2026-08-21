@@ -56,8 +56,12 @@ def encode(path: Path) -> str:
     return f"data:{mime};base64,{encoded}"
 
 
-def build_namespace(run_dir: Path) -> dict:
-    """Flatten the run's JSON into the dotted names the template refers to."""
+def build_namespace(run_dir: Path, compare_dir: Path | None = None) -> dict:
+    """Flatten the run's JSON into the dotted names the template refers to.
+
+    A comparison run, if given, is exposed under `alt.*` so the architecture
+    section quotes measured values too rather than hand-typed ones.
+    """
     test = json.loads((run_dir / "test_metrics.json").read_text(encoding="utf-8"))
     cross = json.loads((run_dir / "cross_eval.json").read_text(encoding="utf-8"))
     results = cross["results"]
@@ -84,6 +88,18 @@ def build_namespace(run_dir: Path) -> dict:
         block = namespace.get(key)
         if block and "calibration" in block:
             namespace[f"{key}_cal"] = block["calibration"]
+
+    if compare_dir is not None:
+        alt_test = json.loads((compare_dir / "test_metrics.json").read_text(encoding="utf-8"))
+        alt_cross = json.loads((compare_dir / "cross_eval.json").read_text(encoding="utf-8"))
+        namespace["alt"] = {
+            "test": alt_test["test"],
+            "lab": alt_cross["results"]["plantvillage_test_shared"],
+            "field": alt_cross["results"]["plantdoc_open"],
+            "gap": alt_cross["generalization_gap"],
+            "parameters": alt_test["trainable_parameters"],
+            "train_minutes": alt_test["train_seconds"] / 60,
+        }
 
     return namespace
 
@@ -140,12 +156,15 @@ def main() -> None:
     ap.add_argument("--template", type=Path, required=True)
     ap.add_argument("--figures", type=Path, required=True)
     ap.add_argument("--run-dir", type=Path, required=True)
+    ap.add_argument("--compare-dir", type=Path, default=None,
+                    help="Second run, exposed to the template as alt.*")
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
 
     html = args.template.read_text(encoding="utf-8")
 
-    html, n_values = substitute_values(html, build_namespace(args.run_dir))
+    namespace = build_namespace(args.run_dir, args.compare_dir)
+    html, n_values = substitute_values(html, namespace)
     print(f"substituted {n_values} measured values")
 
     placeholders = sorted(set(re.findall(r"\{\{FIG:([a-z0-9_]+)\}\}", html)))

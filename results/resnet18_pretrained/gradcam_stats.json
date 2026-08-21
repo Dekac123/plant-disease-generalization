@@ -1,0 +1,15 @@
+{
+  "plantvillage": {
+    "n": 384,
+    "mean_border_attention": 0.6489189638911436,
+    "median_border_attention": 0.6482342779636383,
+    "accuracy_on_sample": 0.9973958333333334
+  },
+  "plantdoc": {
+    "n": 384,
+    "mean_border_attention": 0.6670051719993353,
+    "median_border_attention": 0.677375853061676,
+    "accuracy_on_sample": 0.13802083333333334
+  },
+  "uniform_baseline_border_attention": 0.75
+}

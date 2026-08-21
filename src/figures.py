@@ -253,33 +253,42 @@ def calibration_chart(cross_eval: dict, out_path: Path) -> None:
 
 
 def model_comparison_chart(runs: dict[str, dict], out_path: Path) -> None:
-    """Compare architectures on the same in-domain test set."""
+    """Lab vs field accuracy for each architecture.
+
+    Deliberately not a table of in-domain metrics: the finding worth showing is
+    that the two models are indistinguishable on the benchmark and far apart in
+    the field, so benchmark rank does not predict field rank.
+    """
     names = list(runs)
-    measures = [("Accuracy", "accuracy"), ("Macro F1", "macro_f1"),
-                ("Balanced accuracy", "balanced_accuracy")]
+    lab = [runs[n]["cross"]["results"]["plantvillage_test_shared"]["accuracy"] for n in names]
+    field = [runs[n]["cross"]["results"]["plantdoc_open"]["accuracy"] for n in names]
 
-    x = np.arange(len(measures))
-    width = 0.8 / max(len(names), 1)
-    palette = [SERIES_1, SERIES_2, "#1baf7a"]
+    x = np.arange(len(names))
+    width = 0.34
+    gap = 0.012
 
-    fig, ax = plt.subplots(figsize=(8.5, 4.4))
-    for i, name in enumerate(names):
-        offset = (i - (len(names) - 1) / 2) * (width + 0.012)
-        values = [runs[name]["test"][key] for _, key in measures]
-        bars = ax.bar(x + offset, values, width, label=name, color=palette[i % len(palette)])
+    fig, ax = plt.subplots(figsize=(8.5, 4.8))
+    bars_lab = ax.bar(x - width / 2 - gap, lab, width,
+                      label="PlantVillage (lab)", color=SERIES_1)
+    bars_field = ax.bar(x + width / 2 + gap, field, width,
+                        label="PlantDoc (field)", color=SERIES_2)
+
+    for bars, values in ((bars_lab, lab), (bars_field, field)):
         for bar, value in zip(bars, values):
             ax.annotate(f"{value:.3f}",
                         (bar.get_x() + bar.get_width() / 2, value),
                         textcoords="offset points", xytext=(0, 3),
-                        ha="center", fontsize=7.5, color=SECONDARY_INK)
+                        ha="center", fontsize=8.5, color=SECONDARY_INK)
 
     ax.set_xticks(x)
-    ax.set_xticklabels([m[0] for m in measures])
-    ax.set_ylabel("score")
-    ax.set_ylim(0, 1.08)
-    ax.set_title("Architecture comparison — PlantVillage held-out test",
-                 fontsize=12, pad=30)
-    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=len(names))
+    ax.set_xticklabels(names, fontsize=9)
+    ax.set_ylabel("accuracy")
+    ax.set_ylim(0, 1.12)
+    ax.set_title(
+        "Benchmark rank does not predict field rank",
+        fontsize=12, pad=30,
+    )
+    ax.legend(loc="lower center", bbox_to_anchor=(0.5, 1.005), ncol=2)
 
     _save(fig, out_path)
 
@@ -324,12 +333,22 @@ def main() -> None:
         print(f"skipping cross-dataset figures: {cross_path} not found")
 
     if args.compare_dirs:
-        runs = {args.run_dir.name: test_payload}
-        for d in args.compare_dirs:
-            path = d / "test_metrics.json"
-            if path.exists():
-                runs[d.name] = json.loads(path.read_text(encoding="utf-8"))
-        model_comparison_chart(runs, figures / "model_comparison.png")
+        runs = {}
+        for d in [args.run_dir, *args.compare_dirs]:
+            metrics_path = d / "test_metrics.json"
+            cross_path = d / "cross_eval.json"
+            if not (metrics_path.exists() and cross_path.exists()):
+                print(f"skipping {d.name} in comparison: needs both "
+                      "test_metrics.json and cross_eval.json")
+                continue
+            runs[d.name] = {
+                "test": json.loads(metrics_path.read_text(encoding="utf-8")),
+                "cross": json.loads(cross_path.read_text(encoding="utf-8")),
+            }
+        if len(runs) >= 2:
+            model_comparison_chart(runs, figures / "model_comparison.png")
+        else:
+            print("need at least two complete runs for the comparison chart")
 
 
 if __name__ == "__main__":

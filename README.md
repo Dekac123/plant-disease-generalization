@@ -56,7 +56,23 @@ actually looking at?).
 
 Control (independent PlantVillage mirror): **0.9771** accuracy.
 
-Three findings worth more than the headline number:
+### The benchmark ranks the two models backwards
+
+The original project's from-scratch CNN was trained under identical conditions
+— same split, augmentation, schedule, epoch budget and checkpoint rule. The
+only differences are architecture and ImageNet initialisation.
+
+| | Lab (39-class) | Field | Relative drop |
+|---|---|---|---|
+| ResNet9, from scratch | **0.9972** | 0.0985 | 90.1% |
+| ResNet18, pretrained | 0.9965 | **0.1483** | 85.1% |
+
+The scratch model wins the benchmark and is a third less accurate on real
+photographs. Selecting a model the way this field normally does — by held-out
+benchmark accuracy — picks the worse one. The benchmark does not merely
+overstate performance; it inverts the ordering.
+
+Four more findings worth more than the headline number:
 
 - **34.9% of field photographs are classified `Background_without_leaves`** —
   the class meaning "no leaf in this image". The model learned "leaf" to mean a
